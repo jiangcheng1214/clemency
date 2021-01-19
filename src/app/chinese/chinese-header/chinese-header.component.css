@@ -1,0 +1,18 @@
+.navbar {
+    background-color: #673AB7;
+}
+
+.navbar-brand{
+  color: white;
+}
+
+.custom-toggler{
+  outline: none;
+}
+
+li a:focus {
+		  border:2px solid white;
+      border-radius: 15px;
+      color: white;
+      outline: none;
+		}

@@ -1,0 +1,22 @@
+.bigcanvas{
+  background-color: #FFFCF1;
+}
+
+ .test_title {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.test_text{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.startbutton{
+  margin-top: 10px;
+  margin-bottom: 30px;
+  background-color: #EFEFEF;
+}
+
