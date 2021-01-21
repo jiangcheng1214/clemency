@@ -1,33 +1,33 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { ChineseComponent } from './chinese/chinese.component';
-import { EnglishComponent } from './english/english.component';
-import { EnglishTestComponent } from './english/english-test/english-test.component';
-import { EnglishRecoverResultComponent } from './english/english-recover-result/english-recover-result.component';
+import { RecoverComponent } from './components/recover/recover.component';
+import { PaymentComponent } from './components/payment/payment.component';
+import { ResultComponent } from './components/result/result.component';
+import { MainComponent } from './components/main/main.component';
 
 const routes: Routes = [
   {
-    path: 'en',
-    component: EnglishComponent,
-    children:[
-      {
-        path:'taketest',
-        component: EnglishTestComponent,
-      },
-      {
-        path:'recoverresult',
-        component: EnglishRecoverResultComponent,
-      },
-      {
-        path:'',
-        redirectTo: '/en/taketest',
-        pathMatch:'full'
-      }
-    ]
-   },
-  { path: 'ch-sim', component: ChineseComponent },
-  { path: '', redirectTo: '/en/taketest', pathMatch: 'full' }
+    path: ':language/',
+    component: MainComponent,
+  },
+  {
+    path: ':language',
+    component: MainComponent,
+  },
+  {
+    path: ':language/recover',
+    component: RecoverComponent,
+  },
+  {
+    path: ':language/payment',
+    component: PaymentComponent,
+  },
+  {
+    path: ':language/result',
+    component: ResultComponent,
+  },
+  { path: '', redirectTo: '/en/', pathMatch:"full"}
 ];
 
 @NgModule({
