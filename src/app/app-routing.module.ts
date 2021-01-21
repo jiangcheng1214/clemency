@@ -12,6 +12,10 @@ const routes: Routes = [
     component: MainComponent,
   },
   {
+    path: ':language',
+    component: MainComponent,
+  },
+  {
     path: ':language/recover',
     component: RecoverComponent,
   },
