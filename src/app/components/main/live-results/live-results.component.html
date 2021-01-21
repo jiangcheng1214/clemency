@@ -1,1 +1,4 @@
-<div class="live-results">live-results works!</div>
+<div class="live-results">live-results</div>
+<div *ngFor="let result of lastResults">
+    {{ result.nation }} | {{ result.name }} | {{ result.score }}
+</div>
