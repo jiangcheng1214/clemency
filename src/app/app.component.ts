@@ -7,4 +7,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'international statistical IQ test (2021)';
+
+  constructor() {
+  }
 }
