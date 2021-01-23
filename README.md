@@ -3,7 +3,9 @@
 ***
 
 Note (1/23/2021):
-An unhandled exception occurred: Cannot find module '@angular-devkit/build-angular/package.json'
+
+error: `An unhandled exception occurred: Cannot find module '@angular-devkit/build-angular/package.json'`
+
 solution: `npm install --save-dev @angular-devkit/build-angular`
 
 ***
