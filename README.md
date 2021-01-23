@@ -1,5 +1,13 @@
 # clemency
 
+***
+
+Note (1/23/2021):
+An unhandled exception occurred: Cannot find module '@angular-devkit/build-angular/package.json'
+solution: `npm install --save-dev @angular-devkit/build-angular`
+
+***
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.2.0.
 
 ## Development server
