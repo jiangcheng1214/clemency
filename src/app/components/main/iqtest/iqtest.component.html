@@ -1,4 +1,4 @@
-<div class="iq-test">
+<div *ngIf="!isTesting" class="bigcanvas container">
     <h5 class="test_title">International IQ test</h5>
     <div class="test_text">Welcome to the international IQ test.</div>
     <div class="test_text font-weight-bold">Before starting the test, make sure you are in a place where you can focus.</div>
@@ -8,6 +8,43 @@
     your position in comparison to the population using several statistics.*</div>
 
 	  <div class="text-center">
-      <button type="button" class="btn btn-light startbutton" (click)="onTestStart()">Start the test</button>
+      <button type="button" class="btn btn-light startbutton" (click)="clickstart()">Start the test</button>
 	  </div>
 </div>
+
+<div *ngIf="isTesting" class="bigcanvas container">
+    <h5 class="test_title">Choose the missing figure.</h5>
+    <div class="row">
+        <div class="col-3">
+        </div>
+        <img class="images" src="{{imageSrc}}">
+    </div>
+    <div class="row">
+        <div class="col-2">
+        </div>
+        <div class="col-3" (click)="onClick(1)">
+            a.<img class="optionimages" src="assets/ex1_a.png" >
+        </div>
+        <div class="col-3" (click)="onClick(2)">
+            b.<img class="optionimages" src="assets/ex1_b.png">
+        </div>
+        <div class="col-3" (click)="onClick(3)">
+            c.<img class="optionimages" src="assets/ex1_c.png">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2">
+        </div>
+        <div class="col-3" (click)="onClick(4)">
+            d.<img class="optionimages" src="assets/ex1_d.png" >
+        </div>
+        <div class="col-3" (click)="onClick(5)">
+            e.<img class="optionimages" src="assets/ex1_e.png">
+        </div>
+        <div class="col-3" (click)="onClick(6)">
+            f.<img class="optionimages" src="assets/ex1_f.png">
+        </div>
+    </div>
+</div>
+
+
