@@ -6,16 +6,25 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./iqtest.component.css']
 })
 export class IQTestComponent implements OnInit {
-  testStarted:boolean;
+  answers: Number[];
+  imageSrc: String;
+
   constructor() { }
 
   ngOnInit(): void {
-    this.testStarted = false;
+    this.imageSrc = '';
+    this.answers = [];
   }
 
-  onTestStart(): void {
+  onClickStartTesting(): void {
     console.log("start test clicked")
-    this.testStarted = true;
+    this.imageSrc = "static/assets/ex1.png";
+  }
+
+  onClick(num): void {
+    console.log('click:', num);
+    this.answers.push(num);
+    console.log('answers:', this.answers);
   }
 
 }
