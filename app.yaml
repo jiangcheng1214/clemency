@@ -7,7 +7,11 @@ handlers:
     static_files: dist/clemency/index.html
     upload: dist/clemency/index.html
   - url: /
-    static_dir: dist/clemency
+    static_dir: dist/clemency/
+
+  - url: /(.*\.(bmp|gif|ico|jpeg|jpg|png))
+    static_files: dist/clemency/static/assets/\1
+    upload: dist/clemency/static/assets/(.*\.(bmp|gif|ico|jpeg|jpg|png))
 
 skip_files:
   - e2e/
