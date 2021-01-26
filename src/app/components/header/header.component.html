@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">
-        <h5>International IQ registry</h5>
+        <h5>{{ appTitle }}</h5>
     </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -9,14 +9,14 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" routerLink="/{{ selectedLanguage }}/">Take the test <span
+                <a class="nav-link" routerLink="/{{ currentLanguageCode }}/">{{ takeTestTitle }}<span
                         class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" routerLink="/{{ selectedLanguage }}/recover">Recover my result</a>
+                <a class="nav-link" routerLink="/{{ currentLanguageCode }}/recover">{{ recoverResultTitle }}</a>
             </li>
         </ul>
-        <select [(ngModel)]="selectedLanguage" (ngModelChange)='onselectedLanguageChange($event)'>
+        <select [(ngModel)]="currentLanguageCode" (ngModelChange)='onSelectedLanguageChange($event)'>
             <option *ngFor="let language of supportedLanguages" [value]="language.code">
                 {{ language.name }}
             </option>
