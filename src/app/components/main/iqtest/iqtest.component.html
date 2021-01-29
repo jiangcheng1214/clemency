@@ -1,44 +1,50 @@
-<div *ngIf="!imageSrc; else elseBlock" class="bigcanvas container">
+<div *ngIf="questionCounter==0; else startTestingBlock" class="bigcanvas container">
     <h5 class="test_title">{{ title }}</h5>
     <div class="test_text">{{ introduction }}</div>
     <div class="text-center">
-        <button type="button" class="btn btn-light startbutton" (click)="onClickStartTesting()">{{ buttonText }}</button>
+        <button type="button" class="btn btn-light startbutton" (click)="onClickStartTesting()">{{ buttonText
+            }}</button>
     </div>
 </div>
 
-<ng-template #elseBlock>
-    <div class="bigcanvas container">
-        <h5 class="test_title">Choose the missing figure.</h5>
-        <div class="row">
-            <div class="col-3">
+<ng-template #startTestingBlock>
+    <div *ngIf="questionCounter<=totalQuestionCount; else finishTestingBlock">
+        <div class="bigcanvas container">
+            <h5 class="test_title">Choose the missing figure.</h5>
+            <div class="row">
+                <div class="col-3">
+                </div>
+                <img class="images" src="static/assets/questions/{{questionCounter}}/q.png">
             </div>
-            <img class="images" src="{{imageSrc}}">
-        </div>
-        <div class="row">
-            <div class="col-2">
+            <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-3" (click)="onClick('a')">
+                    a.<img class="optionimages" src="static/assets/questions/{{questionCounter}}/a.png">
+                </div>
+                <div class="col-3" (click)="onClick('b')">
+                    b.<img class="optionimages" src="static/assets/questions/{{questionCounter}}/b.png">
+                </div>
+                <div class="col-3" (click)="onClick('c')">
+                    c.<img class="optionimages" src="static/assets/questions/{{questionCounter}}/c.png">
+                </div>
             </div>
-            <div class="col-3" (click)="onClick(1)">
-                a.<img class="optionimages" src="static/assets/ex1_a.png">
-            </div>
-            <div class="col-3" (click)="onClick(2)">
-                b.<img class="optionimages" src="static/assets/ex1_b.png">
-            </div>
-            <div class="col-3" (click)="onClick(3)">
-                c.<img class="optionimages" src="static/assets/ex1_c.png">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-2">
-            </div>
-            <div class="col-3" (click)="onClick(4)">
-                d.<img class="optionimages" src="static/assets/ex1_d.png">
-            </div>
-            <div class="col-3" (click)="onClick(5)">
-                e.<img class="optionimages" src="static/assets/ex1_e.png">
-            </div>
-            <div class="col-3" (click)="onClick(6)">
-                f.<img class="optionimages" src="static/assets/ex1_f.png">
+            <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-3" (click)="onClick('d')">
+                    d.<img class="optionimages" src='static/assets/questions/{{questionCounter}}/d.png'>
+                </div>
+                <div class="col-3" (click)="onClick('e')">
+                    e.<img class="optionimages" src="static/assets/questions/{{questionCounter}}/e.png">
+                </div>
+                <div class="col-3" (click)="onClick('f')">
+                    f.<img class="optionimages" src="static/assets/questions/{{questionCounter}}/f.png">
+                </div>
             </div>
         </div>
     </div>
+    <ng-template #finishTestingBlock>
+        <app-submit></app-submit>
+    </ng-template>
 </ng-template>

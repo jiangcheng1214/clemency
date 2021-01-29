@@ -1,4 +1,17 @@
 <div class="live-results">{{ description }}</div>
+<table>
+<tr>
+    <th>Nationality</th>
+    <th>Name</th>
+    <th>Score</th>
+    <th>Time</th>
+  </tr>
 <div *ngFor="let result of lastResults">
-    {{ result.nation }} | {{ result.name }} | {{ result.score }}
+    <tr>
+        <td>{{ result.nationality }} </td>
+        <td>{{ result.pseudonym }}</td>
+        <td>{{ result.score }}</td>
+        <td>{{ result.timestamp }}</td>
+    </tr>
 </div>
+</table>
