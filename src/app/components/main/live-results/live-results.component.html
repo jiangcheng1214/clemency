@@ -1,17 +1,21 @@
 <div class="live-results">{{ description }}</div>
-<table>
-<tr>
-    <th>Nationality</th>
-    <th>Name</th>
-    <th>Score</th>
-    <th>Time</th>
-  </tr>
 <div *ngFor="let result of lastResults">
-    <tr>
-        <td>{{ result.nationality }} </td>
-        <td>{{ result.pseudonym }}</td>
-        <td>{{ result.score }}</td>
-        <td>{{ result.timestamp }}</td>
-    </tr>
+	<div class="row">
+		<div class="col-5 font_text">
+		
+				<img class="images" src=result.flaglink>
+		
+		</div>
+		<div class="col-7">
+			<div class="row font_text">
+				{{ result.pseudonym  }} 
+			</div>
+			<div class="row font_text">
+				{{ result.score  }} 
+			</div>
+			<div class="row font_text">
+				{{ result.timestamp  }} 
+			</div>
+		</div>
+	</div>
 </div>
-</table>
