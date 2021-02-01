@@ -17,8 +17,8 @@
             </li>
         </ul>
         <select [(ngModel)]="currentLanguageCode" (ngModelChange)='onSelectedLanguageChange($event)'>
-            <option *ngFor="let language of supportedLanguages" [value]="language.code">
-                {{ language.name }}
+            <option *ngFor="let language of getSupportedLanguages() | keyvalue" [value]="language.key">
+                {{ language.value }}
             </option>
         </select>
     </div>
