@@ -3,15 +3,16 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-  - url: /
+  # All files that can be compiled in angular. Luckily, they all have suffixes.
+  - url: /(.*\.(css|html|ico|js|png|txt|jpg))
+    static_files: dist/clemency/\1
+    upload: dist/clemency/(.*\.(css|html|ico|js|png|txt|jpg))
+  # Site root, plus anything else, like deep urls
+  # Make this be secure, otherwise oauth redirect won't work if they want to us with http://
+  - url: /.*
     static_files: dist/clemency/index.html
+    secure: always
     upload: dist/clemency/index.html
-  - url: /
-    static_dir: dist/clemency/
-
-  - url: /(.*\.(bmp|gif|ico|jpeg|jpg|png))
-    static_files: dist/clemency/static/assets/\1
-    upload: dist/clemency/static/assets/(.*\.(bmp|gif|ico|jpeg|jpg|png))
 
 skip_files:
   - e2e/
