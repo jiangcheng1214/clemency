@@ -16,21 +16,14 @@
                 <a class="nav-link" routerLink="/{{ currentLanguageCode }}/recover">{{ recoverResultTitle }}</a>
             </li>
         </ul>
-        <select [(ngModel)]="currentLanguageCode" (ngModelChange)='onSelectedLanguageChange($event)'>
-            <option *ngFor="let language of getSupportedLanguages() | keyvalue" [value]="language.key">
-                {{ language.value }}
-            </option>
-        </select>
-
 
         <ul class="navbar-nav">
-          <li class="nav-item dropdown ">
+          <li class="nav-item dropdown " >
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              English
+              {{currentLanguageString}}
             </a>
-            <div class="dropdown-menu mr-auto" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" routerLink="/en">Engilish</a>
-              <a class="dropdown-item" routerLink="/ch-sim">汉语</a>
+            <div class="dropdown-menu mr-auto" aria-labelledby="navbarDropdown" >
+              <a class="dropdown-item" routerLink="" (click)='onSelectedLanguageChange(language.key)' *ngFor="let language of languageService.supportedLanguages | keyvalue" [value]="language.key" >{{ language.value }}</a>
             </div>
           </li>
         </ul>

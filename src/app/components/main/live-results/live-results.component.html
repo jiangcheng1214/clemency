@@ -1,20 +1,23 @@
 <div class="live-results">{{ description }}</div>
+
 <div *ngFor="let result of lastResults">
-	<div class="row">
-		<div class="col-5 font_text">
-		
-				<img class="images" src=result.flaglink>
-		
-		</div>
-		<div class="col-7">
-			<div class="row font_text">
-				{{ result.pseudonym  }} 
+	<div class="">
+		<div class="row">
+			<div class="col-8">
+				<div class="flagdiv">
+					<img class="flagimages" src={{myMap[result.nationality]}}>
+				</div>
 			</div>
-			<div class="row font_text">
-				{{ result.score  }} 
-			</div>
-			<div class="row font_text">
-				{{ result.timestamp  }} 
+			<div class="col-4">
+				<div class="row font_text">
+					{{ result.pseudonym  }} 
+				</div>
+				<div class="row font_text">
+					{{ result.score  }} 
+				</div>
+				<div class="row font_text">
+					{{ result.timestamp  }} 
+				</div>
 			</div>
 		</div>
 	</div>
