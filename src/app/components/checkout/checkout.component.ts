@@ -1,13 +1,11 @@
 import { Component, OnInit, HostListener, Injectable } from '@angular/core';
+import { loadStripe } from '@stripe/stripe-js';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 declare var StripeCheckout; // : StripeCheckoutStatic;
 
 const testAPIKey = 'pk_test_51IFx5hDSmzjzdNYArWG4qyRn1UBQzxNqGGZUeKRJX3T6RP9GnsjHqFeM7VLBPwv8moou0G7VSckq5cibK9f0jVH000r4R3njwZ';
-const testSecretKey = 'sk_test_51IFx5hDSmzjzdNYABkFivNRUrJLPVSelEl3D3aCsTUN0gQ2Wi3VBEfIZZu2hPBtoXEpdiZ3pYEfJwZ95B5YyAmig00MLK4GJ0f';
-const liveAPIKey = 'pk_live_51IFx5hDSmzjzdNYAEA00Ty3RxF4Palvu3alvRyvCTsuNZk9S8S6MJdhMI2TeQsSAofQzWAvjjAX6lFQO5DVqLERR00ksf4Z0R4';
-const liveSecretKey = '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';
 
 @Component({
   selector: 'app-checkout',
@@ -15,60 +13,32 @@ const liveSecretKey = 'sk_live_51IFx5hDSmzjzdNYAjdhF3gMCh2mf2S9ArDctSGCyaBzMmjO6
   styleUrls: ['./checkout.component.scss']
 })
 @Injectable()
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent {
 
   constructor(private http: HttpClient, private functions: AngularFireFunctions) { }
 
-  amount;
-  description;
-
-  handler; // : StripeCheckoutHandler;
-
-  confirmation: any;
+  stripePromise = loadStripe(testAPIKey);
   loading = false;
+  testPriceId = 'plan_IsQsyoIw5k9eTh';
+  quantity = 1;
 
-  ngOnInit() {
-    this.amount = 100.00;
-    this.handler = StripeCheckout.configure({
-      key: testAPIKey,
-      image: 'favicon.ico',
-      locale: 'auto',
-      source: async (source) => {
-        this.loading = true;
+  async checkout() {
+    // Call your backend to create the Checkout session.
 
-        console.log('source callback called. source:' + JSON.stringify(source))
-        const url: string = 'https://api.stripe.com/v1/charges';
-        const headers = new HttpHeaders()
-          .set('Authorization', 'Bearer ' + testSecretKey)
-          .set('amount', '1')
-          .set('currency', 'usd')
-          .set('source', source.id)
-          .set('description', 'testing')
-        this.http.get(url, { headers: headers }).subscribe(res => {
-          this.confirmation = res;
-          this.loading = false;
-        })
-      }
+    // When the customer clicks on the button, redirect them to Checkout.
+    const stripe = await this.stripePromise;
+    const { error } = await stripe.redirectToCheckout({
+      mode: 'payment',
+      lineItems: [{ price: this.testPriceId, quantity: this.quantity }],
+      successUrl: `${window.location.href}`,
+      cancelUrl: `${window.location.href}/failure`,
     });
-  }
+    // If `redirectToCheckout` fails due to a browser or network
+    // error, display the localized error message to your customer
+    // using `error.message`.
+    if (error) {
+      console.log(error);
+    }
 
-  // Open the checkout handler
-  async checkout(e) {
-    // const user = await this.auth.getUser();
-    console.log('checkout called' + e)
-    this.handler.open({
-      name: 'Checkout Name',
-      description: 'Checkout Description',
-      amount: this.amount,
-      email: "test@test.com",
-    });
-    e.preventDefault();
   }
-
-  // Close on navigate
-  @HostListener('window:popstate')
-  onPopstate() {
-    this.handler.close();
-  }
-
 }
