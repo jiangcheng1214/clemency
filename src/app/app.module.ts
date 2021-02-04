@@ -14,11 +14,8 @@ import { FormsModule } from '@angular/forms';
 import { IQTestComponent } from './components/main/iqtest/iqtest.component';
 import { DeclarationComponent } from './components/main/declaration/declaration.component';
 import { environment } from 'src/environments/environment';
-import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { AngularFireFunctionsModule } from '@angular/fire/functions';
-import { CheckoutComponent } from './components/checkout/checkout.component';
-import { HttpClientModule } from '@angular/common/http';
+import { SubmitComponent } from './components/main/submit/submit.component';
+import { ResultComponent } from './components/result/result.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +27,8 @@ import { HttpClientModule } from '@angular/common/http';
     HeaderComponent,
     IQTestComponent,
     DeclarationComponent,
-    CheckoutComponent,
+    SubmitComponent,
+    ResultComponent,
   ],
   imports: [
     FormsModule,
@@ -38,10 +36,6 @@ import { HttpClientModule } from '@angular/common/http';
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
-    AngularFireAuthModule,
-    AngularFirestoreModule,
-    AngularFireFunctionsModule,
-    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
