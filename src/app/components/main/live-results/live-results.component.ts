@@ -12,6 +12,7 @@ interface User {
   studyField: string
   gender: string
   score: number
+  flaglink: string
 }
 
 @Component({
@@ -30,6 +31,16 @@ export class LiveResultsComponent implements OnInit {
       this.lastResults = (results as User[]).sort((a, b) => {
         return a.timestamp > b.timestamp ? -1 : 0;
       })
+      console.log(this.lastResults)
+
+      for (var i=0;i<this.lastResults.length;i++){
+        if (this.lastResults[i].nationality=="USA"){
+            this.lastResults[i].flaglink="static/assets/flags/US.jpg";
+            }
+        else{
+            this.lastResults[i].flaglink="static/assets/flags/CN.jpg";
+		}
+	  }
       console.log(this.lastResults)
     })
   }
