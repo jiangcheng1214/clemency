@@ -15,6 +15,7 @@ import { IQTestComponent } from './components/main/iqtest/iqtest.component';
 import { DeclarationComponent } from './components/main/declaration/declaration.component';
 import { environment } from 'src/environments/environment';
 import { SubmitComponent } from './components/main/submit/submit.component';
+import { ResultComponent } from './components/result/result.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { SubmitComponent } from './components/main/submit/submit.component';
     IQTestComponent,
     DeclarationComponent,
     SubmitComponent,
+    ResultComponent,
   ],
   imports: [
     FormsModule,

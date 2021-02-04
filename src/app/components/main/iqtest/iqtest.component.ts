@@ -7,6 +7,7 @@ import { LanguageService } from 'src/app/services/language.service';
   templateUrl: './iqtest.component.html',
   styleUrls: ['./iqtest.component.css']
 })
+
 export class IQTestComponent implements OnInit {
   answers: Number[];
   currentLanguageCode: String;
