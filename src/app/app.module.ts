@@ -16,7 +16,6 @@ import { DeclarationComponent } from './components/main/declaration/declaration.
 import { environment } from 'src/environments/environment';
 import { SubmitComponent } from './components/main/submit/submit.component';
 import { ResultComponent } from './components/result/result.component';
-import { TestComponent } from './components/test/test.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +29,6 @@ import { TestComponent } from './components/test/test.component';
     DeclarationComponent,
     SubmitComponent,
     ResultComponent,
-    TestComponent,
   ],
   imports: [
     FormsModule,

@@ -27,12 +27,13 @@ export class LiveResultsComponent implements OnInit {
   description: String;
 
   constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private languageService: LanguageService) {
-
-    db.list(firebaseUtils.firebaseRecentResultsPath).valueChanges().subscribe(results => {
-      this.lastResults = (results as User[]).sort((a, b) => {
+    var _this = this;
+    db.database.ref(firebaseUtils.firebaseRecentResultsPath).once("value").then(function(data: any){
+      const resultMap = data.val()
+      const resultArraySorted: any[] = Object.values(resultMap).sort((a : User, b: User) => {
         return a.timestamp > b.timestamp ? -1 : 0;
-      }).slice(0, 30)
-      console.log(this.lastResults)
+      });
+      _this.lastResults = resultArraySorted.slice(0, 20);
     })
   }
 
