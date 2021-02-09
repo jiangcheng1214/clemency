@@ -4,8 +4,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { RecoverComponent } from './components/recover/recover.component';
 import { MainComponent } from './components/main/main.component';
 import { ResultComponent } from './components/result/result.component';
+import { TestComponent } from './components/test/test.component';
 
 const routes: Routes = [
+  {
+    path: ':language/test',
+    component: TestComponent,
+  },
   {
     path: ':language/',
     component: MainComponent,

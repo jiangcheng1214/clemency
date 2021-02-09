@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { LanguageService } from 'src/app/services/language.service';
 import { LocalizationConstants } from 'src/app/modules/localization/localization.module';
+import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 
 interface User {
   pseudonym: string
@@ -12,7 +13,6 @@ interface User {
   studyField: string
   gender: string
   score: number
-  //flaglink: string
 }
 
 @Component({
@@ -25,35 +25,14 @@ export class LiveResultsComponent implements OnInit {
   lastResults: User[];
   currentLanguageCode: String;
   description: String;
-    myMap = {};
 
-  constructor(private db: AngularFireDatabase, private languageService: LanguageService) {
-	this.myMap["USA"]="static/assets/flags/US.jpg";
-	this.myMap["China"]="static/assets/flags/CN.jpg";
-	this.myMap["France"]="static/assets/flags/CN.jpg";
-	this.myMap["Canada"]="static/assets/flags/CN.jpg";
-	this.myMap["Other"]="static/assets/flags/CN.jpg";
-	this.myMap["France"]="static/assets/flags/CN.jpg";
+  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private languageService: LanguageService) {
 
-
-    db.list("/test-results").valueChanges().subscribe(results => {
+    db.list(firebaseUtils.firebaseRecentResultsPath).valueChanges().subscribe(results => {
       this.lastResults = (results as User[]).sort((a, b) => {
         return a.timestamp > b.timestamp ? -1 : 0;
-      })
+      }).slice(0, 30)
       console.log(this.lastResults)
-	  
-
-      //for (var i=0;i<this.lastResults.length;i++){
-		//console.log(this.myMap[this.lastResults[i].nationality]);
-		//console.log(this.lastResults[i].nationality);
-      //  if (this.lastResults[i].nationality=="USA"){
-      //      this.lastResults[i].flaglink="static/assets/flags/US.jpg";
-      //      }
-      //  else{
-      //      this.lastResults[i].flaglink="static/assets/flags/CN.jpg";
-	 //}
-	  //}
-      //console.log(this.lastResults)
     })
   }
 
@@ -69,6 +48,10 @@ export class LiveResultsComponent implements OnInit {
   _updateTextBasedOnLanguageCode(languageCode): void {
     this.currentLanguageCode = languageCode
     this.description = LocalizationConstants.LiveResults.DESCRIPTION.get(this.currentLanguageCode.toString());
+  }
+
+  flagPathForCountryCode(countryCode:string):string {
+    return "static/assets/flags/" + countryCode + ".jpg"
   }
 
 }
