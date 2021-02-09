@@ -15,13 +15,19 @@ handlers:
     upload: dist/clemency/index.html
 
 skip_files:
-  - e2e/
-  - node_modules/
-  - src/
+  - ^(.*/)?.*/build/.*$
+  - ^(.*/)?.*/test/.*$
+  - ^(.*/)?.*/templates/.*$
+  - ^(.*/)?.*/node_modules/.*$
+
+  - ^(build/.*)
+  - ^(test/.*)
+  - ^(templates/.*)
+  - ^(node_modules/.*)
+
+  - ^(.*/)?#.*#$
+  - ^(.*/)?.*~$
+  - ^(.*/)?.*\.DS_Store$
+  - ^(.*/)?.*\.py[co]$
+  - ^(.*/)?.*/RCS/.*$
   - ^(.*/)?\..*$
-  - ^(.*/)?.*\.json$
-  - ^(.*/)?.*\.md$
-  - ^(.*/)?.*\.yaml$
-  - ^LICENSE
-  - .git/
-  - .firebaserc
