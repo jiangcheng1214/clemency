@@ -23,3 +23,5 @@ skip_files:
   - ^(.*/)?.*\.md$
   - ^(.*/)?.*\.yaml$
   - ^LICENSE
+  - .git/
+  - .firebaserc
