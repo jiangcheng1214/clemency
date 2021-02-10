@@ -23,7 +23,7 @@
               {{currentLanguageString}}
             </a>
             <div class="dropdown-menu mr-auto" aria-labelledby="navbarDropdown" >
-              <a class="dropdown-item" routerLink="" (click)='onSelectedLanguageChange(language.key)' *ngFor="let language of languageService.supportedLanguages | keyvalue" [value]="language.key" >{{ language.value }}</a>
+              <a class="dropdown-item" routerLink="" (click)='onSelectedLanguageChange(language.key)' *ngFor="let language of locationLanguageService.supportedLanguages | keyvalue" [value]="language.key" >{{ language.value }}</a>
             </div>
           </li>
         </ul>

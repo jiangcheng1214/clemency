@@ -16,6 +16,7 @@ import { DeclarationComponent } from './components/main/declaration/declaration.
 import { environment } from 'src/environments/environment';
 import { SubmitComponent } from './components/main/submit/submit.component';
 import { ResultComponent } from './components/result/result.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { ResultComponent } from './components/result/result.component';
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

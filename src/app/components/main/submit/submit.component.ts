@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { LanguageService } from 'src/app/services/language.service';
+import { LocationLanguageService } from 'src/app/services/location-language.service';
 import { formatDate } from '@angular/common';
 import { loadStripe } from '@stripe/stripe-js';
-import { isDevMode } from '@angular/core';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 
 const testAPIKey = 'pk_test_51IFx5hDSmzjzdNYArWG4qyRn1UBQzxNqGGZUeKRJX3T6RP9GnsjHqFeM7VLBPwv8moou0G7VSckq5cibK9f0jVH000r4R3njwZ';
@@ -17,20 +16,26 @@ const testPriceId = 'plan_IsQsyoIw5k9eTh';
 })
 export class SubmitComponent implements OnInit {
   currentLanguageCode: String;
-
   // Checkout properties
   stripePromise = loadStripe(testAPIKey);
   quantity = 1;
+  countryFlagEmojiUnicode;
+  countryName: string;
+  countryCode: string;
 
-  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private languageService: LanguageService) { }
+  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService) { }
 
   ngOnInit(): void {
-    this._updateTextBasedOnLanguageCode(this.languageService.currentLanguageCode);
-    this.languageService.currentLanguageCodeSubject.subscribe(
+    this._updateTextBasedOnLanguageCode(this.locationLanguageService.currentLanguageCode);
+    this.locationLanguageService.currentLanguageCodeSubject.subscribe(
       languageCode => {
         this._updateTextBasedOnLanguageCode(languageCode);
       }
     )
+    // TODO: dispalay country flag emoji
+    this.countryFlagEmojiUnicode = this.locationLanguageService.getCountryFlagEmojiUnicode();
+    this.countryName = this.locationLanguageService.getCountryName();
+    this.countryCode = this.locationLanguageService.getCountryCode();
   }
 
   _updateTextBasedOnLanguageCode(languageCode): void {
@@ -42,7 +47,7 @@ export class SubmitComponent implements OnInit {
     var timestamp = formatDate(new Date(), 'MM/dd/yyyy hh:mm:ss', 'en-US');
     let data = {
       pseudonym: userInfoForm.form.value.pseudonym,
-      countryCode: userInfoForm.form.value.countryCode,
+      countryCode: this.countryCode,
       emailAddress: userInfoForm.form.value.emailAddress,
       timestamp: timestamp,
       educationLevel: userInfoForm.form.value.educationLevel,
@@ -50,7 +55,7 @@ export class SubmitComponent implements OnInit {
       gender: userInfoForm.form.value.gender,
       score: 100
     }
-    
+
     // TODO: validate data input
     if (!data.pseudonym || !data.countryCode || !data.emailAddress || !data.educationLevel || !data.studyField || !data.score || !data.gender) {
       console.log("invalid data")
