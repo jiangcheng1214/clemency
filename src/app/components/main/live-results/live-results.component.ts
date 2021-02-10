@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { LanguageService } from 'src/app/services/language.service';
+import { LocationLanguageService } from 'src/app/services/location-language.service';
 import { LocalizationConstants } from 'src/app/modules/localization/localization.module';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 
@@ -26,7 +26,7 @@ export class LiveResultsComponent implements OnInit {
   currentLanguageCode: String;
   description: String;
 
-  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private languageService: LanguageService) {
+  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService) {
     var _this = this;
     db.database.ref(firebaseUtils.firebaseRecentResultsPath).once("value").then(function(data: any){
       const resultMap = data.val()
@@ -38,8 +38,8 @@ export class LiveResultsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._updateTextBasedOnLanguageCode(this.languageService.currentLanguageCode);
-    this.languageService.currentLanguageCodeSubject.subscribe(
+    this._updateTextBasedOnLanguageCode(this.locationLanguageService.currentLanguageCode);
+    this.locationLanguageService.currentLanguageCodeSubject.subscribe(
       languageCode => {
         this._updateTextBasedOnLanguageCode(languageCode);
       }

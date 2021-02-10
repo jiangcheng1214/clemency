@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalizationConstants } from 'src/app/modules/localization/localization.module';
-import { LanguageService } from 'src/app/services/language.service';
+import { LocationLanguageService } from 'src/app/services/location-language.service';
 
 @Component({
   selector: 'app-iqtest',
@@ -17,12 +17,12 @@ export class IQTestComponent implements OnInit {
   questionCounter: number;
   totalQuestionCount: number;
 
-  constructor(private languageService: LanguageService) { }
+  constructor(private locationLanguageService: LocationLanguageService) { }
 
   ngOnInit(): void {
     this.answers = [];
-    this._updateTextBasedOnLanguageCode(this.languageService.currentLanguageCode)
-    this.languageService.currentLanguageCodeSubject.subscribe(
+    this._updateTextBasedOnLanguageCode(this.locationLanguageService.currentLanguageCode)
+    this.locationLanguageService.currentLanguageCodeSubject.subscribe(
       languageCode => {
         this._updateTextBasedOnLanguageCode(languageCode)
       }

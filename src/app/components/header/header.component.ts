@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LanguageService } from 'src/app/services/language.service';
+import { LocationLanguageService } from 'src/app/services/location-language.service';
 import { Title } from '@angular/platform-browser';
 import { LocalizationConstants } from 'src/app/modules/localization/localization.module';
 
@@ -17,13 +17,13 @@ export class HeaderComponent implements OnInit {
   currentLanguageString: string;
 
 
-  constructor(public languageService: LanguageService, private titleService: Title) {
+  constructor(public locationLanguageService: LocationLanguageService, private titleService: Title) {
   }
 
   ngOnInit(): void {
 
-    this.currentLanguageCode = this.languageService.currentLanguageCode;
-	this.currentLanguageString=this.languageService.supportedLanguages.get(this.currentLanguageCode);
+    this.currentLanguageCode = this.locationLanguageService.currentLanguageCode;
+	this.currentLanguageString=this.locationLanguageService.supportedLanguages.get(this.currentLanguageCode);
     this.titleService.setTitle(LocalizationConstants.APP.TITLE.get(this.currentLanguageCode.toString()))
     this.appTitle = LocalizationConstants.APP.TITLE.get(this.currentLanguageCode.toString());
     this.takeTestTitle = LocalizationConstants.APP.TAKE_TEST_TITLE.get(this.currentLanguageCode.toString());
@@ -31,8 +31,8 @@ export class HeaderComponent implements OnInit {
   }
 
   onSelectedLanguageChange(languageCode: string) {
-    this.languageService.updateSelectedLanguageCode(languageCode);
-	this.currentLanguageString=this.languageService.supportedLanguages.get(languageCode);
+    this.locationLanguageService.updateSelectedLanguageCode(languageCode);
+	this.currentLanguageString=this.locationLanguageService.supportedLanguages.get(languageCode);
     console.log('[Header] language updated:' + this.currentLanguageString);
     this.titleService.setTitle(LocalizationConstants.APP.TITLE.get(languageCode.toString()))
     this.appTitle = LocalizationConstants.APP.TITLE.get(languageCode.toString());
@@ -41,7 +41,7 @@ export class HeaderComponent implements OnInit {
   }
 
   getSupportedLanguages():Map<string, string> {
-    return this.languageService.supportedLanguages;
+    return this.locationLanguageService.supportedLanguages;
   }
 
 }

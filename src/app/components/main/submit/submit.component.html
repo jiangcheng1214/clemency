@@ -3,6 +3,8 @@
 <h2>Congratulations, you have just completed the test!</h2>
 <p>To build your result and statistics (IQ score, age range, field of study and level of study), please fill out this
     form:</p>
+<p>{{ countryName }}</p>
+<p>{{ countryCode }}</p>
 <div class="container">
     <form #userInfoForm="ngForm" (ngSubmit)="onSubmitClicked(userInfoForm);">
         <div class="form-group">
@@ -130,26 +132,14 @@
         <div class="form-group">
             <label>Education Level</label>
             <select name="educationLevel" ngModel>
-            <option value=""></option>
-            <option value="0">No diploma</option>
-            <option value="1">High school diploma</option>
-            <option value="2">2 years studies degree</option>
-            <option value="3">3 years studies degree</option>
-            <option value="4">4 years studies degree</option>
-            <option value="5">5 years studies degree</option>
-            <option value="6">more than 5 years studies degree</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Nationality</label>
-            <select name="countryCode" ngModel>
-            <option value=""></option>
-            <option value="cn">China</option>
-            <option value="us">USA</option>
-            <option value="ca">Canada</option>
-            <option value="jp">Japan</option>
-            <option value="kr">Korea</option>
-            <option value="it">Italy</option>
+                <option value=""></option>
+                <option value="0">No diploma</option>
+                <option value="1">High school diploma</option>
+                <option value="2">2 years studies degree</option>
+                <option value="3">3 years studies degree</option>
+                <option value="4">4 years studies degree</option>
+                <option value="5">5 years studies degree</option>
+                <option value="6">more than 5 years studies degree</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary" (click)="checkout()">Validate</button>
