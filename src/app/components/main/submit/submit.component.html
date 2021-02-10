@@ -142,15 +142,17 @@
         </div>
         <div class="form-group">
             <label>Nationality</label>
-            <select name="nationality" ngModel>
+            <select name="countryCode" ngModel>
             <option value=""></option>
-            <option value="China">China</option>
-            <option value="USA">USA</option>
-            <option value="Canada">Canada</option>
-            <option value="France">France</option>
-            <option value="Other">Other</option>
+            <option value="cn">China</option>
+            <option value="us">USA</option>
+            <option value="ca">Canada</option>
+            <option value="jp">Japan</option>
+            <option value="kr">Korea</option>
+            <option value="it">Italy</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary" (click)="checkout()">Validate</button>
+        <button type="submit" class="btn btn-primary">Update</button>
     </form>
 </div>

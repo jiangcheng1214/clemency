@@ -4,6 +4,8 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { LanguageService } from 'src/app/services/language.service';
 import { formatDate } from '@angular/common';
 import { loadStripe } from '@stripe/stripe-js';
+import { isDevMode } from '@angular/core';
+import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 
 const testAPIKey = 'pk_test_51IFx5hDSmzjzdNYArWG4qyRn1UBQzxNqGGZUeKRJX3T6RP9GnsjHqFeM7VLBPwv8moou0G7VSckq5cibK9f0jVH000r4R3njwZ';
 const testPriceId = 'plan_IsQsyoIw5k9eTh';
@@ -20,7 +22,7 @@ export class SubmitComponent implements OnInit {
   stripePromise = loadStripe(testAPIKey);
   quantity = 1;
 
-  constructor(private db: AngularFireDatabase, private languageService: LanguageService) { }
+  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private languageService: LanguageService) { }
 
   ngOnInit(): void {
     this._updateTextBasedOnLanguageCode(this.languageService.currentLanguageCode);
@@ -40,7 +42,7 @@ export class SubmitComponent implements OnInit {
     var timestamp = formatDate(new Date(), 'MM/dd/yyyy hh:mm:ss', 'en-US');
     let data = {
       pseudonym: userInfoForm.form.value.pseudonym,
-      nationality: userInfoForm.form.value.nationality,
+      countryCode: userInfoForm.form.value.countryCode,
       emailAddress: userInfoForm.form.value.emailAddress,
       timestamp: timestamp,
       educationLevel: userInfoForm.form.value.educationLevel,
@@ -48,11 +50,14 @@ export class SubmitComponent implements OnInit {
       gender: userInfoForm.form.value.gender,
       score: 100
     }
-    if (!data.pseudonym || !data.nationality || !data.emailAddress || !data.educationLevel || !data.studyField || !data.score || !data.nationality || !data.gender) {
+    
+    // TODO: validate data input
+    if (!data.pseudonym || !data.countryCode || !data.emailAddress || !data.educationLevel || !data.studyField || !data.score || !data.gender) {
       console.log("invalid data")
     } else {
       console.log(data)
-      this.db.list("/test-results").push(data)
+      this.db.list(this.firebaseUtils.firebaseRecentResultsPath).push(data)
+      this.db.list(this.firebaseUtils.firebaseResultsPath).push(data)
     }
   }
 
