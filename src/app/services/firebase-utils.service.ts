@@ -7,6 +7,7 @@ import { Injectable, isDevMode } from '@angular/core';
 export class FirebaseUtilsService {
   public firebaseRecentResultsPath: string;
   public firebaseResultsPath: string;
+  public firebaseFlagMapPath: string;
   constructor() { 
     const date = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
     if (isDevMode()) {
@@ -16,5 +17,6 @@ export class FirebaseUtilsService {
       this.firebaseRecentResultsPath = "prod/recent-results"
       this.firebaseResultsPath = "prod/iq-test-results/"+date
     }
+    this.firebaseFlagMapPath = 'flag-map'
   }
 }

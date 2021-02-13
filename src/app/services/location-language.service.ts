@@ -2,29 +2,42 @@ import { Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { FirebaseUtilsService } from './firebase-utils.service';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 interface LocaleData {
   "ip": string,
-  "type": string,
-  "continent_code": string,
+  "state_prov": string,
   "continent_name": string,
-  "country_code": string,
+  "country_code2": string,
+  "country_code3": string,
   "country_name": string,
-  "region_code": string,
-  "region_name": string,
+  "country_capital": string,
+  "district": string,
   "city": string,
-  "zip": string,
-  "latitude": number,
-  "longitude": number,
-  "location": {
-    "geoname_id": number,
-    "capital": string,
-    "languages": { "code": string, "name": string, "native": string }[],
-    "country_flag": string,
-    "country_flag_emoji": string,
-    "country_flag_emoji_unicode": string,
-    "calling_code": string,
-    "is_eu": false
+  "zipcode": string,
+  "latitude": string,
+  "longitude": string,
+  "calling_code": string,
+  "country_tld": string,
+  "languages": string,
+  "country_flag": string,
+  "geoname_id": string,
+  "isp": string,
+  "connection_type": string,
+  "organization": string,
+  "currency": {
+    "code": string,
+    "name": string,
+    "symbol": string
+  },
+  "time_zone": {
+    "name": string,
+    "offset": number,
+    "current_time": string,
+    "current_time_unix": number,
+    "is_dst": boolean,
+    "dst_savings": number
   }
 }
 
@@ -37,14 +50,23 @@ export class LocationLanguageService {
   public supportedLanguages: Map<string, string>;
   localeData: LocaleData;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private http: HttpClient, private router: Router) {
     try {
       this.supportedLanguages = new Map([['en', 'English'], ['ch', '汉语']]);
       this.currentLanguageCodeSubject = new Subject();
-      // TODO: upgrade to prenium for bucks if necessary https://ipstack.com/
-      this.http.get<any>('http://api.ipstack.com/76.175.69.159?access_key=e15876bbe6374926943370c103a129c7').subscribe(data => {
-        console.log('Callback')
+      // https://api.ipgeolocation.io/ipgeo?apiKey=2d836806f62245f79e2a00191320bf3b
+      const promise = this.http.get<any>('https://api.ipgeolocation.io/ipgeo?apiKey=2d836806f62245f79e2a00191320bf3b').toPromise() 
+      promise.then(data => {
         this.localeData = data as LocaleData;
+        try {
+          this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath).once('value', snapshot => {
+            if (!snapshot.hasChild(this.localeData.country_code2.toLowerCase())) {
+              this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath+"/"+this.localeData.country_code2.toLowerCase()).set(this.localeData.country_flag)
+            }
+          });
+        } catch (error) {
+          console.log("update flag map error: " + error)
+        }
       })
       this.currentLanguageCode = this.locationBasedPreferredLanguage()
       this.router.navigateByUrl("/" + this.currentLanguageCode)
@@ -82,21 +104,21 @@ export class LocationLanguageService {
     }
   }
 
-  getCountryFlagEmojiUnicode() {
+  getCountryFlagLink() {
     if (this.localeData) {
-      return this.localeData.location.country_flag_emoji_unicode;
+      return this.localeData.country_flag;
     }
   }
 
-  getCountryName():string {
+  getCountryName(): string {
     if (this.localeData) {
       return this.localeData.country_name;
     }
   }
 
-  getCountryCode():string {
+  getCountryCode(): string {
     if (this.localeData) {
-      return this.localeData.country_code.toLowerCase();
+      return this.localeData.country_code2.toLowerCase();
     }
   }
 

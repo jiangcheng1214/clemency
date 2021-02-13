@@ -19,7 +19,7 @@ export class SubmitComponent implements OnInit {
   // Checkout properties
   stripePromise = loadStripe(testAPIKey);
   quantity = 1;
-  countryFlagEmojiUnicode;
+  countryFlagLink: string;
   countryName: string;
   countryCode: string;
 
@@ -32,8 +32,7 @@ export class SubmitComponent implements OnInit {
         this._updateTextBasedOnLanguageCode(languageCode);
       }
     )
-    // TODO: dispalay country flag emoji
-    this.countryFlagEmojiUnicode = this.locationLanguageService.getCountryFlagEmojiUnicode();
+    this.countryFlagLink = this.locationLanguageService.getCountryFlagLink();
     this.countryName = this.locationLanguageService.getCountryName();
     this.countryCode = this.locationLanguageService.getCountryCode();
   }
@@ -48,6 +47,7 @@ export class SubmitComponent implements OnInit {
     let data = {
       pseudonym: userInfoForm.form.value.pseudonym,
       countryCode: this.countryCode,
+      countryFlagImageLink: this.locationLanguageService.getCountryFlagLink(),
       emailAddress: userInfoForm.form.value.emailAddress,
       timestamp: timestamp,
       educationLevel: userInfoForm.form.value.educationLevel,
@@ -57,7 +57,7 @@ export class SubmitComponent implements OnInit {
     }
 
     // TODO: validate data input
-    if (!data.pseudonym || !data.countryCode || !data.emailAddress || !data.educationLevel || !data.studyField || !data.score || !data.gender) {
+    if (!data.pseudonym || !data.countryCode || !data.emailAddress || !data.educationLevel || !data.studyField || !data.score || !data.gender || !data.countryFlagImageLink) {
       console.log("invalid data")
     } else {
       console.log(data)
