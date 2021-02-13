@@ -58,15 +58,6 @@ export class LocationLanguageService {
       const promise = this.http.get<any>('https://api.ipgeolocation.io/ipgeo?apiKey=2d836806f62245f79e2a00191320bf3b').toPromise() 
       promise.then(data => {
         this.localeData = data as LocaleData;
-        try {
-          this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath).once('value', snapshot => {
-            if (!snapshot.hasChild(this.localeData.country_code2.toLowerCase())) {
-              this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath+"/"+this.localeData.country_code2.toLowerCase()).set(this.localeData.country_flag)
-            }
-          });
-        } catch (error) {
-          console.log("update flag map error: " + error)
-        }
       })
       this.currentLanguageCode = this.locationBasedPreferredLanguage()
       this.router.navigateByUrl("/" + this.currentLanguageCode)
