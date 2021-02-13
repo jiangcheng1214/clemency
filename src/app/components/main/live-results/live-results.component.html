@@ -1,22 +1,21 @@
 <div class="live-results">{{ description }}</div>
-
-<div *ngFor="let result of lastResults">
+<div *ngFor="let result of lastResults;let i=index;">
 	<div class="">
 		<div class="row">
 			<div class="col-8">
 				<div class="flagdiv">
-					<img class="flagimages" src={{flagPathForCountryCode(result.countryCode)}}>
+					<img class="flagimages" src={{result.countryFlagImageLink}}>
 				</div>
 			</div>
 			<div class="col-4">
 				<div class="row font_text">
-					{{ result.pseudonym  }} 
+					{{ result.pseudonym }}
 				</div>
 				<div class="row font_text">
-					{{ result.score  }} 
+					{{ result.score }}
 				</div>
 				<div class="row font_text">
-					{{ result.timestamp  }} 
+					{{ result.timestamp }}
 				</div>
 			</div>
 		</div>

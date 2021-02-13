@@ -5,6 +5,7 @@
     form:</p>
 <p>{{ countryName }}</p>
 <p>{{ countryCode }}</p>
+<img class="flagimages" src={{countryFlagLink}}>
 <div class="container">
     <form #userInfoForm="ngForm" (ngSubmit)="onSubmitClicked(userInfoForm);">
         <div class="form-group">

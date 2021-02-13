@@ -6,6 +6,7 @@ import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 
 interface User {
   pseudonym: string
+  countryCode: string
   nationality: string
   emailAddress: string
   timestamp: Date
@@ -13,6 +14,7 @@ interface User {
   studyField: string
   gender: string
   score: number
+  countryFlagImageLink: string
 }
 
 @Component({
@@ -25,15 +27,16 @@ export class LiveResultsComponent implements OnInit {
   lastResults: User[];
   currentLanguageCode: String;
   description: String;
+  flagURLs: string[] = [];
+  flagURLsCacheMap: Map<string, string> = new Map();
 
   constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService) {
-    var _this = this;
-    db.database.ref(firebaseUtils.firebaseRecentResultsPath).once("value").then(function(data: any){
+    db.database.ref(firebaseUtils.firebaseRecentResultsPath).once("value").then(data => {
       const resultMap = data.val()
-      const resultArraySorted: any[] = Object.values(resultMap).sort((a : User, b: User) => {
+      const resultArraySorted: any[] = Object.values(resultMap).sort((a: User, b: User) => {
         return a.timestamp > b.timestamp ? -1 : 0;
       });
-      _this.lastResults = resultArraySorted.slice(0, 20);
+      this.lastResults = resultArraySorted.slice(0, 20);
     })
   }
 
@@ -50,9 +53,4 @@ export class LiveResultsComponent implements OnInit {
     this.currentLanguageCode = languageCode
     this.description = LocalizationConstants.LiveResults.DESCRIPTION.get(this.currentLanguageCode.toString());
   }
-
-  flagPathForCountryCode(countryCode:string):string {
-    return "static/assets/flags/" + countryCode + ".jpg"
-  }
-
 }
