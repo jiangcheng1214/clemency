@@ -9,5 +9,8 @@ export const environment = {
     messagingSenderId: "1060237460978",
     appId: "1:1060237460978:web:1f3d35481efca7d3d2176b",
     measurementId: "G-KXZM0B46LL"
+  },
+  ipgeolocation: {
+    apiKey: "2d836806f62245f79e2a00191320bf3b"
   }
 };

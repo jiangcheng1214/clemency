@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FirebaseUtilsService } from './firebase-utils.service';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { environment } from 'src/environments/environment';
 
 interface LocaleData {
   "ip": string,
@@ -55,8 +56,7 @@ export class LocationLanguageService {
     try {
       this.supportedLanguages = new Map([['en', 'English'], ['ch', '汉语']]);
       this.currentLanguageCodeSubject = new Subject();
-      // https://api.ipgeolocation.io/ipgeo?apiKey=2d836806f62245f79e2a00191320bf3b
-      const promise = this.http.get<any>('https://api.ipgeolocation.io/ipgeo?apiKey=2d836806f62245f79e2a00191320bf3b').toPromise() 
+      const promise = this.http.get<any>('https://api.ipgeolocation.io/ipgeo?apiKey='+environment.ipgeolocation.apiKey).toPromise()
       promise.then(data => {
         this.localeData = data as LocaleData;
         return this.localeData
@@ -122,6 +122,8 @@ export class LocationLanguageService {
   }
 
   async getMapURLsMap() {
+    // Cache maps links in firebase at path `{firebase home}/flag-url-map`
+    // Lazily enrich/update the map once new country flag detected
     try {
       if (!this.flagURLsMap) {
         this.flagURLsMap = (await this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath).once('value')).val()
