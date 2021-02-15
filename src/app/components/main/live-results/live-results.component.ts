@@ -14,7 +14,6 @@ interface User {
   studyField: string
   gender: string
   score: number
-  countryFlagImageLink: string
 }
 
 @Component({
@@ -28,7 +27,7 @@ export class LiveResultsComponent implements OnInit {
   currentLanguageCode: String;
   description: String;
   flagURLs: string[] = [];
-  flagURLsCacheMap: Map<string, string> = new Map();
+  flagURLsCacheMap;
 
   constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService) {
     db.database.ref(firebaseUtils.firebaseRecentResultsPath).once("value").then(data => {
@@ -47,6 +46,10 @@ export class LiveResultsComponent implements OnInit {
         this._updateTextBasedOnLanguageCode(languageCode);
       }
     )
+    this.locationLanguageService.getMapURLsMap().then(data => {
+      console.log(data)
+      this.flagURLsCacheMap = data;
+    })
   }
 
   _updateTextBasedOnLanguageCode(languageCode): void {

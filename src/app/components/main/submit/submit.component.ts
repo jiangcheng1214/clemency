@@ -32,9 +32,11 @@ export class SubmitComponent implements OnInit {
         this._updateTextBasedOnLanguageCode(languageCode);
       }
     )
-    this.countryFlagLink = this.locationLanguageService.getCountryFlagLink();
     this.countryName = this.locationLanguageService.getCountryName();
     this.countryCode = this.locationLanguageService.getCountryCode();
+    this.locationLanguageService.getMapURLsMap().then(map => {
+      this.countryFlagLink = map[this.countryCode]
+    })
   }
 
   _updateTextBasedOnLanguageCode(languageCode): void {
@@ -47,7 +49,6 @@ export class SubmitComponent implements OnInit {
     let data = {
       pseudonym: userInfoForm.form.value.pseudonym,
       countryCode: this.countryCode,
-      countryFlagImageLink: this.locationLanguageService.getCountryFlagLink(),
       emailAddress: userInfoForm.form.value.emailAddress,
       timestamp: timestamp,
       educationLevel: userInfoForm.form.value.educationLevel,
@@ -57,7 +58,7 @@ export class SubmitComponent implements OnInit {
     }
 
     // TODO: validate data input
-    if (!data.pseudonym || !data.countryCode || !data.emailAddress || !data.educationLevel || !data.studyField || !data.score || !data.gender || !data.countryFlagImageLink) {
+    if (!data.pseudonym || !data.countryCode || !data.emailAddress || !data.educationLevel || !data.studyField || !data.score || !data.gender) {
       console.log("invalid data")
     } else {
       console.log(data)
