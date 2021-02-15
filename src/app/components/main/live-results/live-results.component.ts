@@ -37,6 +37,9 @@ export class LiveResultsComponent implements OnInit {
       });
       this.lastResults = resultArraySorted.slice(0, 20);
     })
+    this.locationLanguageService.getMapURLsMap().then(data => {
+      this.flagURLsCacheMap = data;
+    })
   }
 
   ngOnInit(): void {
@@ -46,10 +49,6 @@ export class LiveResultsComponent implements OnInit {
         this._updateTextBasedOnLanguageCode(languageCode);
       }
     )
-    this.locationLanguageService.getMapURLsMap().then(data => {
-      console.log(data)
-      this.flagURLsCacheMap = data;
-    })
   }
 
   _updateTextBasedOnLanguageCode(languageCode): void {

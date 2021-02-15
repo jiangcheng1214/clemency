@@ -132,7 +132,6 @@ export class LocationLanguageService {
           this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath).update(newEntery)
         }
       }
-      console.log(this.flagURLsMap)
       return this.flagURLsMap
     } catch (error) {
       console.log(error)
