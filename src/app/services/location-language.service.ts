@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FirebaseUtilsService } from './firebase-utils.service';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { environment } from 'src/environments/environment';
 
 interface LocaleData {
   "ip": string,
@@ -48,16 +49,29 @@ export class LocationLanguageService {
   currentLanguageCodeSubject: Subject<string>;
   public currentLanguageCode: string;
   public supportedLanguages: Map<string, string>;
+  flagURLsMap: Map<string, string>;
   localeData: LocaleData;
 
-  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private http: HttpClient, private router: Router) {
+  constructor(private db: AngularFireDatabase, private firebaseUtils: FirebaseUtilsService, private http: HttpClient, private router: Router) {
     try {
       this.supportedLanguages = new Map([['en', 'English'], ['ch', '汉语']]);
       this.currentLanguageCodeSubject = new Subject();
-      // https://api.ipgeolocation.io/ipgeo?apiKey=2d836806f62245f79e2a00191320bf3b
-      const promise = this.http.get<any>('https://api.ipgeolocation.io/ipgeo?apiKey=2d836806f62245f79e2a00191320bf3b').toPromise() 
+      const promise = this.http.get<any>('https://api.ipgeolocation.io/ipgeo?apiKey='+environment.ipgeolocation.apiKey).toPromise()
       promise.then(data => {
         this.localeData = data as LocaleData;
+        return this.localeData
+      }).then(async localeData => {
+        try {
+          this.flagURLsMap = (await this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath).once('value')).val()
+          let countryCode = localeData.country_code2.toLowerCase()
+          if (!this.flagURLsMap || !this.flagURLsMap[countryCode] || this.flagURLsMap[countryCode] != localeData.country_flag) {
+            let newEntery = {}
+            newEntery[countryCode] = localeData.country_flag
+            this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath).update(newEntery)
+          }
+        } catch (error) {
+          console.log(error)
+        }
       })
       this.currentLanguageCode = this.locationBasedPreferredLanguage()
       this.router.navigateByUrl("/" + this.currentLanguageCode)
@@ -95,12 +109,6 @@ export class LocationLanguageService {
     }
   }
 
-  getCountryFlagLink() {
-    if (this.localeData) {
-      return this.localeData.country_flag;
-    }
-  }
-
   getCountryName(): string {
     if (this.localeData) {
       return this.localeData.country_name;
@@ -110,6 +118,26 @@ export class LocationLanguageService {
   getCountryCode(): string {
     if (this.localeData) {
       return this.localeData.country_code2.toLowerCase();
+    }
+  }
+
+  async getMapURLsMap() {
+    // Cache maps links in firebase at path `{firebase home}/flag-url-map`
+    // Lazily enrich/update the map once new country flag detected
+    try {
+      if (!this.flagURLsMap) {
+        this.flagURLsMap = (await this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath).once('value')).val()
+        let countryCode = this.localeData.country_code2.toLowerCase()
+        if (!this.flagURLsMap[countryCode] || this.flagURLsMap[countryCode] != this.localeData.country_flag) {
+          let newEntery = {}
+          newEntery[countryCode] = this.localeData.country_flag
+          this.db.database.ref(this.firebaseUtils.firebaseFlagMapPath).update(newEntery)
+        }
+      }
+      return this.flagURLsMap
+    } catch (error) {
+      console.log(error)
+      return {};
     }
   }
 
