@@ -5,6 +5,7 @@ import { LocationLanguageService } from 'src/app/services/location-language.serv
 import { formatDate } from '@angular/common';
 import { loadStripe } from '@stripe/stripe-js';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
+import { IQTestComponent } from '../iqtest/iqtest.component';
 
 const testAPIKey = 'pk_test_51IFx5hDSmzjzdNYArWG4qyRn1UBQzxNqGGZUeKRJX3T6RP9GnsjHqFeM7VLBPwv8moou0G7VSckq5cibK9f0jVH000r4R3njwZ';
 const testPriceId = 'plan_IsQsyoIw5k9eTh';
@@ -23,7 +24,7 @@ export class SubmitComponent implements OnInit {
   countryName: string;
   countryCode: string;
 
-  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService) { }
+  constructor(private iqTestComponent: IQTestComponent, private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService) { }
 
   ngOnInit(): void {
     this._updateTextBasedOnLanguageCode(this.locationLanguageService.currentLanguageCode);
@@ -46,6 +47,7 @@ export class SubmitComponent implements OnInit {
 
   onSubmitClicked(userInfoForm: NgForm) {
     var timestamp = formatDate(new Date(), 'MM/dd/yyyy hh:mm:ss', 'en-US');
+    const score = this.iqTestComponent.score
     let data = {
       pseudonym: userInfoForm.form.value.pseudonym,
       countryCode: this.countryCode,
@@ -54,7 +56,7 @@ export class SubmitComponent implements OnInit {
       educationLevel: userInfoForm.form.value.educationLevel,
       studyField: userInfoForm.form.value.studyField,
       gender: userInfoForm.form.value.gender,
-      score: 100
+      score: score
     }
 
     // TODO: validate data input
