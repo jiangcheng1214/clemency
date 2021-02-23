@@ -23,7 +23,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
 
     this.currentLanguageCode = this.locationLanguageService.currentLanguageCode;
-	this.currentLanguageString=this.locationLanguageService.supportedLanguages.get(this.currentLanguageCode);
+    this.currentLanguageString = this.locationLanguageService.supportedLanguages.get(this.currentLanguageCode);
     this.titleService.setTitle(LocalizationConstants.APP.TITLE.get(this.currentLanguageCode.toString()))
     this.appTitle = LocalizationConstants.APP.TITLE.get(this.currentLanguageCode.toString());
     this.takeTestTitle = LocalizationConstants.APP.TAKE_TEST_TITLE.get(this.currentLanguageCode.toString());
@@ -32,7 +32,7 @@ export class HeaderComponent implements OnInit {
 
   onSelectedLanguageChange(languageCode: string) {
     this.locationLanguageService.updateSelectedLanguageCode(languageCode);
-	this.currentLanguageString=this.locationLanguageService.supportedLanguages.get(languageCode);
+    this.currentLanguageString = this.locationLanguageService.supportedLanguages.get(languageCode);
     console.log('[Header] language updated:' + this.currentLanguageString);
     this.titleService.setTitle(LocalizationConstants.APP.TITLE.get(languageCode.toString()))
     this.appTitle = LocalizationConstants.APP.TITLE.get(languageCode.toString());
@@ -40,7 +40,7 @@ export class HeaderComponent implements OnInit {
     this.recoverResultTitle = LocalizationConstants.APP.RECOVER_RESULT_TITLE.get(this.currentLanguageCode.toString());
   }
 
-  getSupportedLanguages():Map<string, string> {
+  getSupportedLanguages(): Map<string, string> {
     return this.locationLanguageService.supportedLanguages;
   }
 
