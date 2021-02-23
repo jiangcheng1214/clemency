@@ -17,6 +17,7 @@ import { environment } from 'src/environments/environment';
 import { SubmitComponent } from './components/main/submit/submit.component';
 import { ResultComponent } from './components/result/result.component';
 import { HttpClientModule } from '@angular/common/http';
+import { CheckoutComponent } from './components/checkout/checkout.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { HttpClientModule } from '@angular/common/http';
     DeclarationComponent,
     SubmitComponent,
     ResultComponent,
+    CheckoutComponent,
   ],
   imports: [
     FormsModule,

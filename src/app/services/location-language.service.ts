@@ -74,7 +74,6 @@ export class LocationLanguageService {
         }
       })
       this.currentLanguageCode = this.locationBasedPreferredLanguage()
-      this.router.navigateByUrl("/" + this.currentLanguageCode)
     } catch (error) {
       console.log(error)
     }
@@ -82,9 +81,11 @@ export class LocationLanguageService {
 
   updateSelectedLanguageCode(languageCode: string) {
     console.log("[LocationLanguageService] selectedLanguage changed to " + languageCode)
+    let tailPart = window.location.href.slice(window.location.origin.length + this.currentLanguageCode.length + 1).replace(/^\/+/, '').replace(/\/$/, "")
     this.currentLanguageCode = languageCode;
     this.currentLanguageCodeSubject.next(languageCode)
-    this.router.navigateByUrl("/" + languageCode + "/")
+    var newURL = (languageCode + "/" + tailPart).replace(/\/$/, "")
+    this.router.navigateByUrl(newURL)
   }
 
   languageSubject(): Subject<String> {

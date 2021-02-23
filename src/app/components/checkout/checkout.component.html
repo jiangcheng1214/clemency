@@ -1,0 +1,17 @@
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <app-live-results></app-live-results>
+        </div>
+        <div class="col-9">
+            <p>Pay with</p>
+            <button class="btn btn-primary" (click)="checkoutStripe()">Stripe</button>
+            <br>
+            <br>
+            <button class="btn btn-primary" (click)="checkoutPaypal()">Paypal (wip)</button>
+            <br>
+            <br>
+            <button class="btn btn-primary" (click)="checkoutCard()">Card (wip)</button>
+        </div>
+    </div>
+</div>
