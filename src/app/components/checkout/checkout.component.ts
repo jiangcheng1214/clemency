@@ -7,13 +7,6 @@ import { AngularFireFunctions } from '@angular/fire/functions';
 
 declare var StripeCheckout: StripeCheckoutStatic;
 
-interface paymentInfo {
-  currency: string;
-  amount: number;
-  description: string;
-  source: any;
-}
-
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
@@ -22,7 +15,7 @@ interface paymentInfo {
 export class CheckoutComponent implements OnInit {
   // Checkout properties
   handler: StripeCheckoutHandler;
-  testData;
+  userTestData;
   uuid: string;
 
   constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService, private functions: AngularFireFunctions) {
@@ -36,7 +29,7 @@ export class CheckoutComponent implements OnInit {
         // TODO: Error handling
         console.log("uuid " + this.uuid + " not found");
       } else {
-        this.testData = result.val()
+        this.userTestData = result.val()
         this.setupStripe();
       }
     }).catch(error => {
@@ -52,7 +45,7 @@ export class CheckoutComponent implements OnInit {
       image: 'static/assets/questions/1/a.png', // TODO: change to a prettier icon
       locale: 'auto',
       amount: 500,
-      email: this.testData.emailAddress,
+      email: this.userTestData.emailAddress,
       name: "clemency",
       currency: 'usd',
       source: source => {
@@ -63,11 +56,13 @@ export class CheckoutComponent implements OnInit {
   }
 
   async handleStripePaymentSource(source) {
-    const info = {
+    const paymentRequestInfo = {
       currency: 'usd',
       amount: 500,
       description: 'test description',
       source: source,
+      userTestData: this.userTestData,
+      uuid: this.uuid
     }
     var cloudFunctionName;
     if (environment.production) {
@@ -75,7 +70,7 @@ export class CheckoutComponent implements OnInit {
     } else {
       cloudFunctionName = 'stripeChargeDev';
     }
-    let response = await this.functions.httpsCallable(cloudFunctionName)(info).toPromise()
+    let response = await this.functions.httpsCallable(cloudFunctionName)(paymentRequestInfo).toPromise()
     console.log(JSON.stringify(response))
   }
 

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { LocationLanguageService } from 'src/app/services/location-language.service';
-import { formatDate } from '@angular/common';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { IQTestComponent } from '../iqtest/iqtest.component';
 import {v4 as uuidv4} from 'uuid';
@@ -48,13 +47,11 @@ export class SubmitComponent implements OnInit {
   }
 
   onSubmitClicked(userInfoForm: NgForm) {
-    var timestamp = formatDate(new Date(), 'MM/dd/yyyy hh:mm:ss', 'en-US');
     const score = this.iqTestComponent.score
     let data = {
       pseudonym: userInfoForm.form.value.pseudonym,
       countryCode: this.countryCode,
       emailAddress: userInfoForm.form.value.emailAddress,
-      timestamp: timestamp,
       educationLevel: userInfoForm.form.value.educationLevel,
       studyField: userInfoForm.form.value.studyField,
       gender: userInfoForm.form.value.gender,

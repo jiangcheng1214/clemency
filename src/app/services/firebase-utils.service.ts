@@ -6,7 +6,6 @@ import { Injectable, isDevMode } from '@angular/core';
 })
 export class FirebaseUtilsService {
   public firebaseRecentResultsPath: string;
-  public firebaseResultsPath: string;
   public firebaseUUIDResultMapPath: string;
 
   public firebaseStandardAnswersPath: string;
@@ -15,12 +14,10 @@ export class FirebaseUtilsService {
     const date = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
     if (isDevMode()) {
       this.firebaseRecentResultsPath = "dev/recent-results"
-      this.firebaseResultsPath = "dev/iq-test-results/"+date
-      this.firebaseUUIDResultMapPath = "dev/uuid-result-map"
+      this.firebaseUUIDResultMapPath = "dev/test-results-by-uuid"
     } else {
       this.firebaseRecentResultsPath = "prod/recent-results"
-      this.firebaseResultsPath = "prod/iq-test-results/"+date
-      this.firebaseUUIDResultMapPath = "prod/uuid-result-map"
+      this.firebaseUUIDResultMapPath = "prod/test-results-by-uuid"
     }
     this.firebaseStandardAnswersPath = 'standard-answers'
     this.firebaseFlagMapPath = 'flag-url-map'
