@@ -1,11 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { loadStripe } from '@stripe/stripe-js';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { LocationLanguageService } from 'src/app/services/location-language.service';
+import { environment } from 'src/environments/environment'
+import { AngularFireFunctions } from '@angular/fire/functions';
 
-const testAPIKey = 'pk_test_51IFx5hDSmzjzdNYArWG4qyRn1UBQzxNqGGZUeKRJX3T6RP9GnsjHqFeM7VLBPwv8moou0G7VSckq5cibK9f0jVH000r4R3njwZ';
-const testPriceId = 'plan_IsQsyoIw5k9eTh';
+declare var StripeCheckout: StripeCheckoutStatic;
+
+interface paymentInfo {
+  currency: string;
+  amount: number;
+  description: string;
+  source: any;
+}
 
 @Component({
   selector: 'app-checkout',
@@ -14,11 +21,11 @@ const testPriceId = 'plan_IsQsyoIw5k9eTh';
 })
 export class CheckoutComponent implements OnInit {
   // Checkout properties
-  stripePromise = loadStripe(testAPIKey);
+  handler: StripeCheckoutHandler;
   testData;
   uuid: string;
 
-  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService) {
+  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService, private functions: AngularFireFunctions) {
 
   }
 
@@ -30,31 +37,57 @@ export class CheckoutComponent implements OnInit {
         console.log("uuid " + this.uuid + " not found");
       } else {
         this.testData = result.val()
+        this.setupStripe();
       }
     }).catch(error => {
       // TODO: Error handling
       console.log(error);
     })
   }
-  // Checkout started
-  async checkoutStripe() {
-    // Call your backend to create the Checkout session.
-    // When the customer clicks on the button, redirect them to Checkout.
-    const stripe = await this.stripePromise;
-    const { error } = await stripe.redirectToCheckout({
-      mode: 'payment',
-      lineItems: [{ price: testPriceId, quantity: 1 }],
-      // TODO: Based on payment callback, set `paid` flag to true on the result
-      successUrl: `${window.location.origin}/${this.locationLanguageService.currentLanguageCode}/result/${this.uuid}`,
-      cancelUrl: `${window.location.origin}/${this.locationLanguageService.currentLanguageCode}/unlock/${this.uuid}`,
-    });
-    // If `redirectToCheckout` fails due to a browser or network
-    // error, display the localized error message to your customer
-    // using `error.message`.
-    if (error) {
-      console.log(error);
-    }
+
+  setupStripe() {
+    console.log("configure")
+    this.handler = StripeCheckout.configure({
+      key: environment.stripeKey,
+      image: 'static/assets/questions/1/a.png', // TODO: change to a prettier icon
+      locale: 'auto',
+      amount: 500,
+      email: this.testData.emailAddress,
+      name: "clemency",
+      currency: 'usd',
+      source: source => {
+        console.log("requst charge.")
+        this.handleStripePaymentSource(source)
+      }
+    })
   }
+
+  async handleStripePaymentSource(source) {
+    const info = {
+      currency: 'usd',
+      amount: 500,
+      description: 'test description',
+      source: source,
+    }
+    var cloudFunctionName;
+    if (environment.production) {
+      cloudFunctionName = 'stripeCharge';
+    } else {
+      cloudFunctionName = 'stripeChargeDev';
+    }
+    let response = await this.functions.httpsCallable(cloudFunctionName)(info).toPromise()
+    console.log(JSON.stringify(response))
+  }
+
+  checkoutStripe() {
+    this.handler.open();
+  }
+
+  @HostListener('window:popstate')
+  onPopstate() {
+    this.handler.close()
+  }
+
 
   checkoutPaypal() {
 
