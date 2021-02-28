@@ -5,6 +5,7 @@ import { LocationLanguageService } from 'src/app/services/location-language.serv
 import { environment } from 'src/environments/environment'
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { UserTestRecord } from 'src/app/modules/interfaces/interfaces.module';
+import { Router } from '@angular/router';
 
 declare var StripeCheckout: StripeCheckoutStatic;
 
@@ -14,16 +15,23 @@ declare var StripeCheckout: StripeCheckoutStatic;
   styleUrls: ['./checkout.component.css']
 })
 export class CheckoutComponent implements OnInit {
+  currentLanguageCode: String;
   // Checkout properties
   handler: StripeCheckoutHandler;
   userTestRecord: UserTestRecord;
   uuid: string;
 
-  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService, private functions: AngularFireFunctions) {
+  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService, private functions: AngularFireFunctions, private router: Router) {
 
   }
 
   ngOnInit(): void {
+    this._updateTextBasedOnLanguageCode(this.locationLanguageService.currentLanguageCode);
+    this.locationLanguageService.currentLanguageCodeSubject.subscribe(
+      languageCode => {
+        this._updateTextBasedOnLanguageCode(languageCode);
+      }
+    )
     this.uuid = window.location.href.split('/unlock/').reverse()[0]
     this.db.database.ref(this.firebaseUtils.firebaseUUIDResultMapPath + "/" + this.uuid).once('value').then(result => {
       if (!result.exists()) {
@@ -37,6 +45,11 @@ export class CheckoutComponent implements OnInit {
       // TODO: Error handling
       console.log(error);
     })
+  }
+
+  _updateTextBasedOnLanguageCode(languageCode): void {
+    this.currentLanguageCode = languageCode
+    // TODO: update form language
   }
 
   setupStripe() {
@@ -73,8 +86,10 @@ export class CheckoutComponent implements OnInit {
     }
     let response = await this.functions.httpsCallable(cloudFunctionName)(paymentRequestInfo).toPromise()
     console.log(JSON.stringify(response))
-    if (response.paid) {
-
+    if (response.payment) {
+      this.router.navigateByUrl("/" + this.currentLanguageCode + "/result/" + this.uuid)
+    } else {
+      // TODO: handle failed payment (should be a rare edge case as Stripe did payment verification upfront.)
     }
   }
 
