@@ -1,5 +1,5 @@
 <h1>Congratelation!</h1>
-<h2>You results has been sent to {{ userTestRecord.emailAddress }}</h2>
-<h3>Name: {{userTestRecord.pseudonym}}</h3>
-<h3>Score: {{userTestRecord.score}}</h3>
-<h3>Country: {{userTestRecord.countryCode}}</h3>
+<h2>You results has been sent to {{ userTestRecord ? userTestRecord.emailAddress : "" }}</h2>
+<h3>Name: {{ userTestRecord ? userTestRecord.pseudonym : "" }}</h3>
+<h3>Score: {{ userTestRecord ? userTestRecord.score : "" }}</h3>
+<h3>Country: {{ userTestRecord ? userTestRecord.countryCode : "" }}</h3>

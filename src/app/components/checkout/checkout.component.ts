@@ -16,13 +16,13 @@ declare var StripeCheckout: StripeCheckoutStatic;
 })
 export class CheckoutComponent implements OnInit {
   currentLanguageCode: String;
+  submittedPayment: boolean;
   // Checkout properties
   handler: StripeCheckoutHandler;
   userTestRecord: UserTestRecord;
   uuid: string;
 
   constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService, private functions: AngularFireFunctions, private router: Router) {
-
   }
 
   ngOnInit(): void {
@@ -38,6 +38,10 @@ export class CheckoutComponent implements OnInit {
         // TODO: Error handling
         console.log("uuid " + this.uuid + " not found");
       } else {
+        if (result.val().payment) {
+          // This user has been paid. So redirect to result page.
+          this.router.navigateByUrl("/" + this.currentLanguageCode + "/result/" + this.uuid)
+        }
         this.userTestRecord = result.val().userTestRecord
         this.setupStripe();
       }
@@ -53,7 +57,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   setupStripe() {
-    console.log("configure")
     this.handler = StripeCheckout.configure({
       key: environment.stripeKey,
       image: 'static/assets/questions/1/a.png', // TODO: change to a prettier icon
@@ -64,8 +67,9 @@ export class CheckoutComponent implements OnInit {
       currency: 'usd',
       source: source => {
         console.log("requst charge.")
+        this.submittedPayment = true;
         this.handleStripePaymentSource(source)
-      }
+      },
     })
   }
 
@@ -94,21 +98,13 @@ export class CheckoutComponent implements OnInit {
   }
 
   checkoutStripe() {
-    this.handler.open();
+    if (!this.submittedPayment) {
+      this.handler.open();
+    }
   }
 
-  @HostListener('window:popstate')
-  onPopstate() {
+  @HostListener('window:popstate') onPopstate() {
     this.handler.close()
-  }
-
-
-  checkoutPaypal() {
-
-  }
-
-  checkoutCard() {
-
   }
 
 }

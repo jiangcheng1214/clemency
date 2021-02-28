@@ -17,7 +17,6 @@ export class ResultComponent implements OnInit {
   ngOnInit(): void {
     this.uuid = window.location.href.split('/result/').reverse()[0]
     this.db.database.ref(this.firebaseUtils.firebaseUUIDResultMapPath + "/" + this.uuid).once('value').then(result => {
-      console.log("result: " + JSON.stringify(result.val()))
       if (!result.exists()) {
         // TODO: Refund handling
         console.log("uuid " + this.uuid + " not found");
