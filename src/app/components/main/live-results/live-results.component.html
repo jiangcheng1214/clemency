@@ -4,15 +4,15 @@
 		<div class="row">
 			<div class="col-8">
 				<div class="flagdiv">
-					<img class="flagimages" src={{flagURLsCacheMap[result.countryCode]}}>
+					<img class="flagimages" src={{flagURLsCacheMap[result.userTestRecord.countryCode]}}>
 				</div>
 			</div>
 			<div class="col-4">
 				<div class="row font_text">
-					{{ result.pseudonym }}
+					{{ result.userTestRecord.pseudonym }}
 				</div>
 				<div class="row font_text">
-					{{ result.score }}
+					{{ result.userTestRecord.score }}
 				</div>
 				<div class="row font_text">
 					{{ result.timestamp }}

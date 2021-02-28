@@ -4,6 +4,7 @@ import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { LocationLanguageService } from 'src/app/services/location-language.service';
 import { environment } from 'src/environments/environment'
 import { AngularFireFunctions } from '@angular/fire/functions';
+import { UserTestRecord } from 'src/app/modules/interfaces/interfaces.module';
 
 declare var StripeCheckout: StripeCheckoutStatic;
 
@@ -15,7 +16,7 @@ declare var StripeCheckout: StripeCheckoutStatic;
 export class CheckoutComponent implements OnInit {
   // Checkout properties
   handler: StripeCheckoutHandler;
-  userTestData;
+  userTestRecord: UserTestRecord;
   uuid: string;
 
   constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService, private functions: AngularFireFunctions) {
@@ -29,7 +30,7 @@ export class CheckoutComponent implements OnInit {
         // TODO: Error handling
         console.log("uuid " + this.uuid + " not found");
       } else {
-        this.userTestData = result.val()
+        this.userTestRecord = result.val().userTestRecord
         this.setupStripe();
       }
     }).catch(error => {
@@ -45,7 +46,7 @@ export class CheckoutComponent implements OnInit {
       image: 'static/assets/questions/1/a.png', // TODO: change to a prettier icon
       locale: 'auto',
       amount: 500,
-      email: this.userTestData.emailAddress,
+      email: this.userTestRecord.emailAddress,
       name: "clemency",
       currency: 'usd',
       source: source => {
@@ -61,7 +62,7 @@ export class CheckoutComponent implements OnInit {
       amount: 500,
       description: 'test description',
       source: source,
-      userTestData: this.userTestData,
+      userTestRecord: this.userTestRecord,
       uuid: this.uuid
     }
     var cloudFunctionName;
@@ -72,6 +73,9 @@ export class CheckoutComponent implements OnInit {
     }
     let response = await this.functions.httpsCallable(cloudFunctionName)(paymentRequestInfo).toPromise()
     console.log(JSON.stringify(response))
+    if (response.paid) {
+
+    }
   }
 
   checkoutStripe() {

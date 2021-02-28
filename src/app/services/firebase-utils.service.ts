@@ -13,10 +13,10 @@ export class FirebaseUtilsService {
   constructor() { 
     const date = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
     if (isDevMode()) {
-      this.firebaseRecentResultsPath = "dev/recent-results"
+      this.firebaseRecentResultsPath = "dev/recent-test-results-by-uuid"
       this.firebaseUUIDResultMapPath = "dev/test-results-by-uuid"
     } else {
-      this.firebaseRecentResultsPath = "prod/recent-results"
+      this.firebaseRecentResultsPath = "prod/recent-test-results-by-uuid"
       this.firebaseUUIDResultMapPath = "prod/test-results-by-uuid"
     }
     this.firebaseStandardAnswersPath = 'standard-answers'
