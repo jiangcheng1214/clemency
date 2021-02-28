@@ -16,7 +16,8 @@ export const environment = {
   },
   ipgeolocation: {
     apiKey: "2d836806f62245f79e2a00191320bf3b"
-  }
+  },
+  stripeKey: "pk_test_51IFx5hDSmzjzdNYArWG4qyRn1UBQzxNqGGZUeKRJX3T6RP9GnsjHqFeM7VLBPwv8moou0G7VSckq5cibK9f0jVH000r4R3njwZ"
 };
 
 /*

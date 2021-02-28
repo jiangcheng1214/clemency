@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { LocationLanguageService } from 'src/app/services/location-language.service';
-import { formatDate } from '@angular/common';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { IQTestComponent } from '../iqtest/iqtest.component';
 import {v4 as uuidv4} from 'uuid';
@@ -48,28 +47,28 @@ export class SubmitComponent implements OnInit {
   }
 
   onSubmitClicked(userInfoForm: NgForm) {
-    var timestamp = formatDate(new Date(), 'MM/dd/yyyy hh:mm:ss', 'en-US');
     const score = this.iqTestComponent.score
-    let data = {
+    let testData = {
       pseudonym: userInfoForm.form.value.pseudonym,
       countryCode: this.countryCode,
       emailAddress: userInfoForm.form.value.emailAddress,
-      timestamp: timestamp,
       educationLevel: userInfoForm.form.value.educationLevel,
       studyField: userInfoForm.form.value.studyField,
       gender: userInfoForm.form.value.gender,
       score: score,
-      paid: false,
     }
 
     // TODO: validate data input
-    if (!data.pseudonym || !data.countryCode || !data.emailAddress || !data.educationLevel || !data.studyField || !data.score || !data.gender) {
+    if (!testData.pseudonym || !testData.countryCode || !testData.emailAddress || 
+      !testData.educationLevel || !testData.studyField || !testData.score || !testData.gender) {
       console.log("invalid data")
     } else {
-      console.log(data)
+      console.log(testData)
       const uuid = uuidv4();
-      
-      this.db.database.ref(this.firebaseUtils.firebaseUUIDResultMapPath + "/" + uuid).set(data).then(result => {
+      let recordData = {
+        userTestRecord:testData
+      }
+      this.db.database.ref(this.firebaseUtils.firebaseUUIDResultMapPath + "/" + uuid).set(recordData).then(result => {
         this.router.navigateByUrl("/en/unlock/" + uuid)
       }).catch(error => {
         console.log("uuid-result update failed");
