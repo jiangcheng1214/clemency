@@ -6,7 +6,6 @@ import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { IQTestComponent } from '../iqtest/iqtest.component';
 import {v4 as uuidv4} from 'uuid';
 import { Router } from '@angular/router';
-import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-submit',
@@ -65,11 +64,9 @@ export class SubmitComponent implements OnInit {
       console.log("invalid data")
       console.log(JSON.stringify(testData))
     } else {
-      var timestamp = formatDate(new Date(), 'MM/dd/yyyy hh:mm:ss', 'en-US');
       const uuid = uuidv4();
       let recordData = {
         userTestRecord:testData,
-        timestamp: timestamp
       }
       this.db.database.ref(this.firebaseUtils.firebaseUUIDResultMapPath + "/" + uuid).set(recordData).then(result => {
         this.router.navigateByUrl("/" + this.currentLanguageCode + "/unlock/" + uuid)
