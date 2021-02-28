@@ -69,7 +69,7 @@ export class SubmitComponent implements OnInit {
         userTestRecord:testData
       }
       this.db.database.ref(this.firebaseUtils.firebaseUUIDResultMapPath + "/" + uuid).set(recordData).then(result => {
-        this.router.navigateByUrl("/en/unlock/" + uuid)
+        this.router.navigateByUrl("/" + this.currentLanguageCode + "/unlock/" + uuid)
       }).catch(error => {
         console.log("uuid-result update failed");
       })
