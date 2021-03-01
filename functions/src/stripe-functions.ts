@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import * as mailFunctions from "./mail-functions";
 
 import { Stripe } from "stripe";
 const stripeDev = new Stripe(functions.config().stripe.secret_dev, {
@@ -11,16 +12,16 @@ const stripeProd = new Stripe(functions.config().stripe.secret_prod, {
 });
 
 interface UserTestRecord {
-    pseudonym: string
-      countryCode: string
-      nationality: string
-      emailAddress: string
-      timestamp: number
-      educationLevel: string
-      studyField: string
-      gender: string
-      score: number
-  }
+  pseudonym: string
+  countryCode: string
+  nationality: string
+  emailAddress: string
+  timestamp: number
+  educationLevel: string
+  studyField: string
+  gender: string
+  score: number
+}
 
 interface PaymentRequestInfo {
   currency: string;
@@ -92,7 +93,7 @@ async function handleStripeChargeRequest(paymentRequestInfo: PaymentRequestInfo,
       const recentResultsPath = databaseBucket + "/recent-test-results-by-uuid/" + paymentRequestInfo.uuid;
       const promise3 = db.ref(recentResultsPath).set(successRecord);
       await Promise.all([promise1, promise2, promise3])
-
+      mailFunctions.sendConfirmationMail(paymentRequestInfo.userTestRecord)
       return successRecord;
     } else {
       const failureResponse = {
