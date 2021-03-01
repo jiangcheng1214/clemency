@@ -1,0 +1,9 @@
+21:52:13.811 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+21:52:13.980 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:9000
+22:57:56.015 [Thread-1] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
+22:57:56.041 [NamespaceSystem-akka.actor.default-dispatcher-25] INFO com.firebase.core.namespace.Terminator$Terminator - 2 actors left to terminate: clemency-firebase-000, clemency-firebase-000-default-rtdb
+22:57:56.051 [NamespaceSystem-akka.actor.default-dispatcher-30] INFO com.firebase.core.namespace.NamespaceActor - Stopping namespace actor for clemency-firebase-000-default-rtdb
+22:57:56.052 [NamespaceSystem-akka.actor.default-dispatcher-32] INFO com.firebase.core.namespace.NamespaceActor - Stopping namespace actor for clemency-firebase-000
+22:57:56.056 [NamespaceSystem-akka.actor.default-dispatcher-32] INFO com.firebase.core.namespace.NamespaceActor - Gauges removed for clemency-firebase-000
+22:57:56.056 [NamespaceSystem-akka.actor.default-dispatcher-30] INFO com.firebase.core.namespace.NamespaceActor - Gauges removed for clemency-firebase-000-default-rtdb
+22:57:56.065 [Thread-1] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.

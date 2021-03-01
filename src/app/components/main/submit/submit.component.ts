@@ -4,7 +4,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { LocationLanguageService } from 'src/app/services/location-language.service';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { IQTestComponent } from '../iqtest/iqtest.component';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { Router } from '@angular/router';
 import { formatDate } from '@angular/common';
 
@@ -18,13 +18,12 @@ export class SubmitComponent implements OnInit {
   countryFlagLink: string;
   countryName: string;
   countryCode: string;
-  // TODO: Change following to ''
-  pseudonym = 'Test';
-  emailAddress = 'TesteEmailAddress@gmail.com';
-  gender = 'man';
-  birthYear = '1990';
-  studyField = 'agriculture';
-  educationLevel = '0'
+  pseudonym: string;
+  emailAddress: string;
+  gender: string;
+  birthYear: string;
+  studyField: string;
+  educationLevel: string;
 
   constructor(private iqTestComponent: IQTestComponent, private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService, private router: Router) { }
 
@@ -61,26 +60,26 @@ export class SubmitComponent implements OnInit {
     }
 
     // TODO: validate data input
-    if (!testRecord.pseudonym || !testRecord.countryCode || !testRecord.emailAddress || 
+    if (!testRecord.pseudonym || !testRecord.countryCode || !testRecord.emailAddress ||
       !testRecord.educationLevel || !testRecord.studyField || !testRecord.gender) {
       console.log("invalid data")
       console.log(JSON.stringify(testRecord))
     } else {
       const uuid = uuidv4();
       let recordData = {
-        userTestRecord:testRecord,
+        userTestRecord: testRecord,
       }
       this.db.database.ref(this.firebaseUtils.firebaseUUIDResultMapPath + "/" + uuid).set(recordData)
-      .then(result => {
-        this.router.navigateByUrl("/" + this.currentLanguageCode + "/unlock/" + uuid)
-      })
-      .catch(error => {
-        console.log("uuid-result update failed");
-      })
+        .then(result => {
+          this.router.navigateByUrl("/" + this.currentLanguageCode + "/unlock/" + uuid)
+        })
+        .catch(error => {
+          console.log("uuid-result update failed");
+        })
     }
   }
 
-  birthYears():number[] {
+  birthYears(): number[] {
     var years = [];
     for (var i = 2007; i >= 1930; i -= 1) {
       years.push(i);
