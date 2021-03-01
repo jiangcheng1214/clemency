@@ -61,7 +61,7 @@ export class CheckoutComponent implements OnInit {
       key: environment.stripeKey,
       image: 'static/assets/questions/1/a.png', // TODO: change to a prettier icon
       locale: 'auto',
-      amount: 500,
+      amount: 50,
       email: this.userTestRecord.emailAddress,
       name: "clemency",
       currency: 'usd',
@@ -76,7 +76,7 @@ export class CheckoutComponent implements OnInit {
   async handleStripePaymentSource(source) {
     const paymentRequestInfo = {
       currency: 'usd',
-      amount: 500,
+      amount: 50,
       description: 'test description',
       source: source,
       userTestRecord: this.userTestRecord,
