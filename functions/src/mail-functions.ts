@@ -47,27 +47,3 @@ export const sendConfirmationMail = (async (userTestRecord: UserTestRecord) => {
     }
 
 });
-
-// export const sendConfirmationMail = functions.database.ref('dev').onWrite(async event => {
-//     console.log("event: " + JSON.stringify(event));
-//     const msg = {
-//         to: "jiangcheng1214@gmail.com",
-//         from: {
-//             name:"clemency",
-//             email:"jiangcheng1214@gmail.com",
-//         },
-//         subject: "Test subject",
-//         templateId: TEMPLATE_ID,
-//         dynamicTemplateData: {
-//             name: "jaycee",
-//             score: "135"
-//         }
-//     }
-//     try {
-//         const response = await sgMail.send(msg);
-//         console.log(response);
-//     } catch (error) {
-//         console.log(error);
-//     }
-
-// });
