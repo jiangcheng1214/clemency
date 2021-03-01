@@ -3,9 +3,14 @@
         <div class="col-3">
             <app-live-results></app-live-results>
         </div>
-        <div class="col-9">
-            <p>Pay with</p>
-            <button class="btn btn-primary" (click)="checkoutStripe()">Stripe</button>
+        <div *ngIf="!submittedPayment; else loadingBlock">
+            <div>
+                <h3>Pay with</h3>
+                <button class="btn btn-primary" (click)="checkoutStripe()">Stripe</button>
+            </div>
         </div>
+        <ng-template #loadingBlock>
+            <div class="loader"></div>
+        </ng-template>
     </div>
 </div>

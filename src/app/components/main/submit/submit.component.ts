@@ -6,6 +6,7 @@ import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { IQTestComponent } from '../iqtest/iqtest.component';
 import {v4 as uuidv4} from 'uuid';
 import { Router } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-submit',
@@ -48,7 +49,7 @@ export class SubmitComponent implements OnInit {
 
   onSubmitClicked(userInfoForm: NgForm) {
     const score = this.iqTestComponent.score
-    let testData = {
+    let testRecord = {
       pseudonym: userInfoForm.form.value.pseudonym,
       countryCode: this.countryCode,
       emailAddress: userInfoForm.form.value.emailAddress,
@@ -56,21 +57,24 @@ export class SubmitComponent implements OnInit {
       studyField: userInfoForm.form.value.studyField,
       gender: userInfoForm.form.value.gender,
       score: score,
+      timestamp: Date.now()
     }
 
     // TODO: validate data input
-    if (!testData.pseudonym || !testData.countryCode || !testData.emailAddress || 
-      !testData.educationLevel || !testData.studyField || !testData.gender) {
+    if (!testRecord.pseudonym || !testRecord.countryCode || !testRecord.emailAddress || 
+      !testRecord.educationLevel || !testRecord.studyField || !testRecord.gender) {
       console.log("invalid data")
-      console.log(JSON.stringify(testData))
+      console.log(JSON.stringify(testRecord))
     } else {
       const uuid = uuidv4();
       let recordData = {
-        userTestRecord:testData,
+        userTestRecord:testRecord,
       }
-      this.db.database.ref(this.firebaseUtils.firebaseUUIDResultMapPath + "/" + uuid).set(recordData).then(result => {
+      this.db.database.ref(this.firebaseUtils.firebaseUUIDResultMapPath + "/" + uuid).set(recordData)
+      .then(result => {
         this.router.navigateByUrl("/" + this.currentLanguageCode + "/unlock/" + uuid)
-      }).catch(error => {
+      })
+      .catch(error => {
         console.log("uuid-result update failed");
       })
     }

@@ -4,6 +4,7 @@ import { LocationLanguageService } from 'src/app/services/location-language.serv
 import { LocalizationConstants } from 'src/app/modules/localization/localization.module';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { UserRecord } from 'src/app/modules/interfaces/interfaces.module';
+import { TimeDateService } from 'src/app/services/time-date.service';
 
 @Component({
   selector: 'app-live-results',
@@ -18,11 +19,14 @@ export class LiveResultsComponent implements OnInit {
   flagURLs: string[] = [];
   flagURLsCacheMap;
 
-  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService) {
+  constructor(private firebaseUtils: FirebaseUtilsService,
+    private db: AngularFireDatabase, 
+    private locationLanguageService: LocationLanguageService, 
+    private timeDateService: TimeDateService) {
     db.database.ref(firebaseUtils.firebaseRecentResultsPath).once("value").then(data => {
       const resultMap = data.val()
       const resultArraySorted: any[] = Object.values(resultMap).sort((a: UserRecord, b: UserRecord) => {
-        return a.timestamp > b.timestamp ? -1 : 0;
+        return a.userTestRecord.timestamp > b.userTestRecord.timestamp ? -1 : 0;
       });
       this.lastResults = resultArraySorted.slice(0, 20);
     })
@@ -38,6 +42,10 @@ export class LiveResultsComponent implements OnInit {
         this._updateTextBasedOnLanguageCode(languageCode);
       }
     )
+  }
+
+  getLocalTimeString(timestamp): string {
+    return this.timeDateService.localTimeStringFromTS(timestamp);
   }
 
   _updateTextBasedOnLanguageCode(languageCode): void {

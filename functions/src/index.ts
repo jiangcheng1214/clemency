@@ -16,37 +16,61 @@ const stripeProd = new Stripe(functions.config().stripe.secret_prod, {
 // // https://firebase.google.com/docs/functions/typescript
 //
 
-// cleanup recent results (prod) every 2 hours
+// cleanup recent results (prod) every 24 hours
 export const cleanupProdRecentResults =
-  functions.pubsub.schedule("0 */2 * * *").onRun((context) => {
+  functions.pubsub.schedule("0 0 * * *").onRun(async (context) => {
     try {
-      const resultRetentionCount = 20;
+      const resultRetentionCount = 3;
       const db = admin.database();
-      db.ref("prod/recent-test-results-by-uuid").once("value").then(function (data: any) {
-        console.log("results: " + JSON.stringify(data.val()));
-        const resultMap = data.val();
-        const resultArraySorted: any[] = Object.keys(resultMap).map(function (key) {
-          return [String(key), resultMap[key]];
-        }).sort((a, b) => {
-          return a[1].timestamp > b[1].timestamp ? -1 : 0;
-        });
-        for (let i = resultRetentionCount; i < resultArraySorted.length; i++) {
-          const keyToRemove = "prod/recent-test-results-by-uuid/" + resultArraySorted[i][0];
-          console.log("Removing: " + resultArraySorted[i]);
-          db.ref(keyToRemove).remove().then(function () {
-            console.log("Removed: " + resultArraySorted[i]);
-          }).catch(function (error: Error) {
-            console.log("Remove error: " + error);
-          });
-        }
+      const data = await db.ref("prod/recent-test-results-by-uuid").once("value")
+      console.log("results: " + JSON.stringify(data.val()));
+      const resultMap = data.val();
+      const resultArraySorted: any[] = Object.keys(resultMap).map(function (key) {
+        return [String(key), resultMap[key]];
+      }).sort((a, b) => {
+        return a[1].userTestRecord.timestamp > b[1].userTestRecord.timestamp ? -1 : 0;
       });
+      await Promise.all(resultArraySorted.slice(resultRetentionCount).map(item => {
+        const keyToRemove = "prod/recent-test-results-by-uuid/" + item[0];
+        console.log("Removing: " + keyToRemove);
+        return db.ref(keyToRemove).remove();
+      }));
+      console.log("Cleanup finished!")
       return null;
     } catch (error) {
       console.log(error);
       return null;
     }
   });
-  
+
+// cleanup cache results that 3 days after (prod) - on every Sunday
+export const cleanupCachedUUIDResults =
+  functions.pubsub.schedule("0 0 * * 0").onRun(async (context) => {
+    try {
+      const maximumRetentionWindowInDays = 3;
+      const db = admin.database();
+      const data = await db.ref("prod/test-results-by-uuid").once("value")
+      console.log("results: " + JSON.stringify(data.val()));
+      const resultMap = data.val();
+      const resultArrayFiltered: any[] = Object.keys(resultMap).map(key => {
+        return [String(key), resultMap[key]];
+      }).filter(item => {
+        const timeDiffInMS = new Date().valueOf() - item[1].userTestRecord.timestamp;
+        return timeDiffInMS / 1000 / 60 / 60 / 24 > maximumRetentionWindowInDays;
+      });
+      await Promise.all(resultArrayFiltered.map(item => {
+        const keyToRemove = "prod/test-results-by-uuid/" + item[0];
+        console.log("Removing: " + keyToRemove);
+        return db.ref(keyToRemove).remove();
+      }))
+      console.log("Cleanup finished!")
+      return null;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  });
+
 
 interface PaymentRequestInfo {
   currency: string;
@@ -66,7 +90,6 @@ interface PaymentRecord {
 interface SuccessRecord {
   payment: PaymentRecord;
   userTestRecord: any;
-  timestamp: string;
 }
 
 async function handleStripeChargeRequest(paymentRequestInfo: PaymentRequestInfo, isProd: boolean) {
@@ -90,7 +113,6 @@ async function handleStripeChargeRequest(paymentRequestInfo: PaymentRequestInfo,
       });
     }
     console.log("response:" + JSON.stringify(response));
-    var timestamp = formatDate(new Date(), 'MM/dd/yyyy hh:mm:ss', 'en-US');
     if (response.paid && response.source && response.amount) {
 
       console.log("Success!");
@@ -102,7 +124,6 @@ async function handleStripeChargeRequest(paymentRequestInfo: PaymentRequestInfo,
           paymentType: "stripe",
         },
         userTestRecord: paymentRequestInfo.userTestRecord,
-        timestamp: timestamp,
       };
       console.log('successRecord: ' + JSON.stringify(successRecord));
       const db = admin.database();
@@ -111,7 +132,7 @@ async function handleStripeChargeRequest(paymentRequestInfo: PaymentRequestInfo,
       const byMonthPath = databaseBucket + "/test-results-by-month/" + yearMonth;
       // special handling "a.b@c.com" => "a,b@c,com"
       const specialEmailAddress = paymentRequestInfo.userTestRecord.emailAddress.toLowerCase().replace(".", ",");
-      const promise1 = db.ref(byMonthPath+"/"+specialEmailAddress).set(successRecord);
+      const promise1 = db.ref(byMonthPath + "/" + specialEmailAddress).set(successRecord);
 
       const byUUIDPath = databaseBucket + "/test-results-by-uuid/" + paymentRequestInfo.uuid;
       const promise2 = db.ref(byUUIDPath).set(successRecord);
@@ -125,7 +146,6 @@ async function handleStripeChargeRequest(paymentRequestInfo: PaymentRequestInfo,
       const failureResponse = {
         payment: null,
         userTestRecord: paymentRequestInfo.userTestRecord,
-        timestamp: timestamp,
       };
       return failureResponse;
     }
