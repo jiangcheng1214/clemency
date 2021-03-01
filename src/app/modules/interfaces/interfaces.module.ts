@@ -30,5 +30,4 @@ export interface UserRecord {
     description: string,
     paymentType: string,
   },
-  timestamp: string,
 }

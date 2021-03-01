@@ -22,7 +22,7 @@
 /src/app/.vs/*
 !.vscode/settings.json  
 !.vscode/tasks.json  
-!.vscode/launch.json  
+!.vscode/launch.json
 !.vscode/extensions.json  
   
 # misc  
@@ -35,6 +35,7 @@ yarn-error.log
 testem.log  
 /typings  
 ui-debug.log
+firebase-debug.log
   
 # System Files  
 .DS_Store  
