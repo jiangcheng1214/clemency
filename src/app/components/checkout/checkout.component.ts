@@ -2,7 +2,8 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { LocationLanguageService } from 'src/app/services/location-language.service';
-import { environment } from 'src/environments/environment'
+import { environment } from 'src/environments/environment.prod'
+// import { environment } from 'src/environments/environment'
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { UserTestRecord } from 'src/app/modules/interfaces/interfaces.module';
 import { Router } from '@angular/router';
@@ -21,8 +22,13 @@ export class CheckoutComponent implements OnInit {
   handler: StripeCheckoutHandler;
   userTestRecord: UserTestRecord;
   uuid: string;
+  stripe;
+  // Async Payment
+  MAX_POLL_COUNT = 20;
+  pollCount;
 
   constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService, private functions: AngularFireFunctions, private router: Router) {
+    this.stripe = Stripe(environment.stripeKey);
   }
 
   ngOnInit(): void {
@@ -74,6 +80,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   async handleStripePaymentSource(source) {
+    console.log(JSON.stringify(source))
     const paymentRequestInfo = {
       currency: 'usd',
       amount: 50,
@@ -103,8 +110,62 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
+  checkoutWechat() {
+    if (!this.submittedPayment) {
+      this.stripe.createSource({
+        type: 'wechat',
+        amount: 50,
+        currency: 'usd',
+      }).then(async (result) => {
+        const source = result.source;
+        console.log(JSON.stringify(source));
+        this.pollCount = 0;
+        this.pollForSourceStatus(source);
+      });
+    }
+  }
+
+  pollForSourceStatus(source) {
+    console.log("pollForSourceStatus, polling Count: " + this.pollCount);
+    this.stripe.retrieveSource({id: source.id, client_secret: source.client_secret}).then(async result => {
+      const source = result.source;
+      console.log("retrieveSource callback, source: " + JSON.stringify(source));
+      console.log("source.status:", source.status);
+      
+      if (source.status === 'chargeable') {
+        console.log("chargeable!")
+        const paymentRequestInfo = {
+          currency: 'usd',
+          amount: 50,
+          description: 'wechat pay description',
+          source: source,
+          userTestRecord: this.userTestRecord,
+          uuid: this.uuid
+        }
+        var cloudFunctionName;
+        if (environment.production) {
+          cloudFunctionName = 'stripeCharge';
+        } else {
+          cloudFunctionName = 'stripeChargeDev';
+        }
+        let response = await this.functions.httpsCallable(cloudFunctionName)(paymentRequestInfo).toPromise()
+        console.log(JSON.stringify(response))
+        // let response = await this.functions.httpsCallable('stripeChargeDev')(source).toPromise()
+        // console.log(JSON.stringify(response))
+      } else if (source.status === 'pending' && this.pollCount < this.MAX_POLL_COUNT) {
+        // Try again in a second, if the Source is still `pending`:
+        this.pollCount += 1;
+        console.log("still pending...")
+        setTimeout(() => {this.pollForSourceStatus(source)}, 1000);
+      } else {
+        // Depending on the Source status, show your customer the relevant message.
+      }
+    });
+  }
+
   @HostListener('window:popstate') onPopstate() {
     this.handler.close()
+    this.pollCount = this.MAX_POLL_COUNT; // TODO better handle listener
   }
 
 }

@@ -47,21 +47,19 @@ async function handleStripeChargeRequest(paymentRequestInfo: PaymentRequestInfo,
   console.log("received charge request!");
   console.log(JSON.stringify(paymentRequestInfo));
   try {
+    const chargeRequestInfo = {
+      amount: paymentRequestInfo.amount,
+      currency: paymentRequestInfo.currency,
+      source: paymentRequestInfo.source.id,
+      description: paymentRequestInfo.description,
+    }
+    console.log("chargeRequestInfo:");
+    console.log(JSON.stringify(chargeRequestInfo));
     var response;
     if (isProd) {
-      response = await stripeProd.charges.create({
-        amount: paymentRequestInfo.amount,
-        currency: paymentRequestInfo.currency,
-        source: paymentRequestInfo.source.id,
-        description: paymentRequestInfo.description,
-      });
+      response = await stripeProd.charges.create(chargeRequestInfo);
     } else {
-      response = await stripeDev.charges.create({
-        amount: paymentRequestInfo.amount,
-        currency: paymentRequestInfo.currency,
-        source: paymentRequestInfo.source.id,
-        description: paymentRequestInfo.description,
-      });
+      response = await stripeDev.charges.create(chargeRequestInfo);
     }
     console.log("response:" + JSON.stringify(response));
     if (response.paid && response.source && response.amount) {
@@ -115,5 +113,5 @@ export const stripeChargeDev = functions.https.onCall(async (paymentRequestInfo:
 
 export const stripeCharge = functions.https.onCall(async (paymentRequestInfo: PaymentRequestInfo) => {
   console.log("started handling Strip payment..");
-  return handleStripeChargeRequest(paymentRequestInfo, false);
+  return handleStripeChargeRequest(paymentRequestInfo, true);
 });
