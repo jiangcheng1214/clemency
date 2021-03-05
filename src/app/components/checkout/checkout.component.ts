@@ -7,6 +7,11 @@ import { environment } from 'src/environments/environment.prod'
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { UserTestRecord } from 'src/app/modules/interfaces/interfaces.module';
 import { Router } from '@angular/router';
+// import {MatDialogModule} from '@angular/material/dialog';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import { WechatPayQRCodeComponent } from '../wechat-pay-qrcode/wechat-pay-qrcode.component';
+import { WechatPayQRCodeService } from 'src/app/services/wechat-pay-qrcode.service';
+import { UserAgentService } from 'src/app/services/user-agent.service';
 
 declare var StripeCheckout: StripeCheckoutStatic;
 
@@ -27,7 +32,14 @@ export class CheckoutComponent implements OnInit {
   MAX_POLL_COUNT = 20;
   pollCount;
 
-  constructor(private firebaseUtils: FirebaseUtilsService, private db: AngularFireDatabase, private locationLanguageService: LocationLanguageService, private functions: AngularFireFunctions, private router: Router) {
+  constructor(private firebaseUtils: FirebaseUtilsService,
+     private db: AngularFireDatabase,
+     private locationLanguageService: LocationLanguageService,
+     private functions: AngularFireFunctions, 
+     private router: Router,
+     private matDialog: MatDialog,
+     private wechatPayQRCodeService: WechatPayQRCodeService,
+     private userAgentService: UserAgentService) {
     this.stripe = Stripe(environment.stripeKey);
   }
 
@@ -110,18 +122,34 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  checkoutWechat() {
+  async checkoutWechat() {
+    // TODO: if else for device type
+
     if (!this.submittedPayment) {
-      this.stripe.createSource({
+      const result = await this.stripe.createSource({
         type: 'wechat',
         amount: 50,
         currency: 'usd',
-      }).then(async (result) => {
+      })
+      
+      // then(async (result) => {
         const source = result.source;
         console.log(JSON.stringify(source));
-        this.pollCount = 0;
-        this.pollForSourceStatus(source);
-      });
+        if (this.userAgentService.isMobile()) {
+
+        } else {
+          this.wechatPayQRCodeService.setQRUrl(source.wechat.qr_code_url)
+          const dialogConfig = new MatDialogConfig();
+          dialogConfig.disableClose = false;
+          dialogConfig.autoFocus = true;
+          dialogConfig.width = "200px";
+          dialogConfig.height = "250px";
+          dialogConfig.panelClass = "no-padding-dialog";
+          this.matDialog.open(WechatPayQRCodeComponent, dialogConfig)
+        }
+        // this.pollCount = 0;
+        // this.pollForSourceStatus(source);
+      // });
     }
   }
 

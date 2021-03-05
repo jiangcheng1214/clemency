@@ -3,3 +3,7 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.no-padding-dialog .mat-dialog-container {
+    padding: 0;
+    background-color: rgb(75, 164, 34);
+  }

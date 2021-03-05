@@ -18,6 +18,9 @@ import { SubmitComponent } from './components/main/submit/submit.component';
 import { ResultComponent } from './components/result/result.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CheckoutComponent } from './components/checkout/checkout.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { WechatPayQRCodeComponent } from './components/wechat-pay-qrcode/wechat-pay-qrcode.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -41,8 +44,11 @@ import { CheckoutComponent } from './components/checkout/checkout.component';
     AngularFireDatabaseModule,
     HttpClientModule,
     AngularFireFunctionsModule,
+    BrowserAnimationsModule,
+    MatDialogModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [WechatPayQRCodeComponent]
 })
 export class AppModule { }
