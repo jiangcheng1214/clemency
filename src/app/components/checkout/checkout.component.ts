@@ -2,12 +2,11 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { FirebaseUtilsService } from 'src/app/services/firebase-utils.service';
 import { LocationLanguageService } from 'src/app/services/location-language.service';
-import { environment } from 'src/environments/environment.prod'
-// import { environment } from 'src/environments/environment'
+// import { environment } from 'src/environments/environment.prod'
+import { environment } from 'src/environments/environment'
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { UserTestRecord } from 'src/app/modules/interfaces/interfaces.module';
 import { Router } from '@angular/router';
-// import {MatDialogModule} from '@angular/material/dialog';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import { WechatPayQRCodeComponent } from '../wechat-pay-qrcode/wechat-pay-qrcode.component';
 import { WechatPayQRCodeService } from 'src/app/services/wechat-pay-qrcode.service';
@@ -135,8 +134,8 @@ export class CheckoutComponent implements OnInit {
       // then(async (result) => {
         const source = result.source;
         console.log(JSON.stringify(source));
-        if (this.userAgentService.isMobile()) {
-
+        if (!this.userAgentService.isMobile()) {
+          window.location.href=source.wechat.qr_code_url;
         } else {
           this.wechatPayQRCodeService.setQRUrl(source.wechat.qr_code_url)
           const dialogConfig = new MatDialogConfig();
@@ -145,7 +144,7 @@ export class CheckoutComponent implements OnInit {
           dialogConfig.width = "200px";
           dialogConfig.height = "250px";
           dialogConfig.panelClass = "no-padding-dialog";
-          this.matDialog.open(WechatPayQRCodeComponent, dialogConfig)
+          const dialog = this.matDialog.open(WechatPayQRCodeComponent, dialogConfig)
         }
         // this.pollCount = 0;
         // this.pollForSourceStatus(source);
