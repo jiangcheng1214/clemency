@@ -1,3 +1,6 @@
-<div class="fill">
+<div *ngIf="!loading; else loadingBlock" class="fill">
     <img src={{qrCodeImageUrl}} alt="" title="" />
 </div>
+<ng-template #loadingBlock>
+    <!-- TODO: Add spinner -->
+</ng-template>

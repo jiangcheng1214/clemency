@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment'
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { UserTestRecord } from 'src/app/modules/interfaces/interfaces.module';
 import { Router } from '@angular/router';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { WechatPayQRCodeComponent } from '../wechat-pay-qrcode/wechat-pay-qrcode.component';
 import { WechatPayQRCodeService } from 'src/app/services/wechat-pay-qrcode.service';
 import { UserAgentService } from 'src/app/services/user-agent.service';
@@ -28,17 +28,17 @@ export class CheckoutComponent implements OnInit {
   uuid: string;
   stripe;
   // Async Payment
-  MAX_POLL_COUNT = 20;
-  pollCount;
+  wechatPaymentChecker;
+  createSourceRef;
 
   constructor(private firebaseUtils: FirebaseUtilsService,
-     private db: AngularFireDatabase,
-     private locationLanguageService: LocationLanguageService,
-     private functions: AngularFireFunctions, 
-     private router: Router,
-     private matDialog: MatDialog,
-     private wechatPayQRCodeService: WechatPayQRCodeService,
-     private userAgentService: UserAgentService) {
+    private db: AngularFireDatabase,
+    private locationLanguageService: LocationLanguageService,
+    private functions: AngularFireFunctions,
+    private router: Router,
+    private matDialog: MatDialog,
+    private wechatPayQRCodeService: WechatPayQRCodeService,
+    private userAgentService: UserAgentService) {
     this.stripe = Stripe(environment.stripeKey);
   }
 
@@ -122,77 +122,60 @@ export class CheckoutComponent implements OnInit {
   }
 
   async checkoutWechat() {
-    // TODO: if else for device type
-
     if (!this.submittedPayment) {
-      const result = await this.stripe.createSource({
-        type: 'wechat',
-        amount: 50,
-        currency: 'usd',
-      })
-      
-      // then(async (result) => {
-        const source = result.source;
-        console.log(JSON.stringify(source));
-        if (!this.userAgentService.isMobile()) {
-          window.location.href=source.wechat.qr_code_url;
-        } else {
-          this.wechatPayQRCodeService.setQRUrl(source.wechat.qr_code_url)
-          const dialogConfig = new MatDialogConfig();
-          dialogConfig.disableClose = false;
-          dialogConfig.autoFocus = true;
-          dialogConfig.width = "200px";
-          dialogConfig.height = "250px";
-          dialogConfig.panelClass = "no-padding-dialog";
-          const dialog = this.matDialog.open(WechatPayQRCodeComponent, dialogConfig)
-        }
-        // this.pollCount = 0;
-        // this.pollForSourceStatus(source);
-      // });
-    }
-  }
-
-  pollForSourceStatus(source) {
-    console.log("pollForSourceStatus, polling Count: " + this.pollCount);
-    this.stripe.retrieveSource({id: source.id, client_secret: source.client_secret}).then(async result => {
-      const source = result.source;
-      console.log("retrieveSource callback, source: " + JSON.stringify(source));
-      console.log("source.status:", source.status);
-      
-      if (source.status === 'chargeable') {
-        console.log("chargeable!")
-        const paymentRequestInfo = {
-          currency: 'usd',
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.disableClose = false;
+      dialogConfig.autoFocus = true;
+      dialogConfig.width = "200px";
+      dialogConfig.height = "250px";
+      dialogConfig.panelClass = "no-padding-dialog";
+      const dialog = this.matDialog.open(WechatPayQRCodeComponent, dialogConfig)
+      if (!this.createSourceRef) {
+        this.createSourceRef = await this.stripe.createSource({
+          type: 'wechat',
           amount: 50,
-          description: 'wechat pay description',
-          source: source,
-          userTestRecord: this.userTestRecord,
-          uuid: this.uuid
-        }
-        var cloudFunctionName;
-        if (environment.production) {
-          cloudFunctionName = 'stripeCharge';
-        } else {
-          cloudFunctionName = 'stripeChargeDev';
-        }
-        let response = await this.functions.httpsCallable(cloudFunctionName)(paymentRequestInfo).toPromise()
-        console.log(JSON.stringify(response))
-        // let response = await this.functions.httpsCallable('stripeChargeDev')(source).toPromise()
-        // console.log(JSON.stringify(response))
-      } else if (source.status === 'pending' && this.pollCount < this.MAX_POLL_COUNT) {
-        // Try again in a second, if the Source is still `pending`:
-        this.pollCount += 1;
-        console.log("still pending...")
-        setTimeout(() => {this.pollForSourceStatus(source)}, 1000);
-      } else {
-        // Depending on the Source status, show your customer the relevant message.
+          currency: 'usd',
+        })
       }
-    });
+      const source = this.createSourceRef.source;
+      console.log(JSON.stringify(source));
+      // TODO: use this.userAgentService.isMobile() for mobile case
+      this.wechatPayQRCodeService.setQRUrl(source.wechat.qr_code_url)
+      clearInterval(this.wechatPaymentChecker);
+      this.wechatPaymentChecker = setInterval(async _ => {
+        const retrieveSourceRef = await this.stripe.retrieveSource({ id: source.id, client_secret: source.client_secret })
+        const retrievedSource = retrieveSourceRef.source
+        if (retrievedSource.status === 'chargeable') {
+          clearInterval(this.wechatPaymentChecker);
+          console.log(JSON.stringify(retrievedSource))
+          const paymentRequestInfo = {
+            currency: 'usd',
+            amount: 50,
+            description: 'wechat pay description',
+            source: retrievedSource,
+            userTestRecord: this.userTestRecord,
+            uuid: this.uuid
+          }
+          var cloudFunctionName;
+          if (environment.production) {
+            cloudFunctionName = 'stripeCharge';
+          } else {
+            cloudFunctionName = 'stripeChargeDev';
+          }
+          let response = await this.functions.httpsCallable(cloudFunctionName)(paymentRequestInfo).toPromise()
+          console.log(JSON.stringify(response))
+          dialog.close();
+          this.router.navigateByUrl("/" + this.currentLanguageCode + "/result/" + this.uuid)
+        } else {
+          console.log(JSON.stringify(retrievedSource.status))
+        }
+      }, 1000)
+    }
   }
 
   @HostListener('window:popstate') onPopstate() {
     this.handler.close()
-    this.pollCount = this.MAX_POLL_COUNT; // TODO better handle listener
+    clearInterval(this.wechatPaymentChecker)
   }
 
 }

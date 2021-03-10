@@ -35,6 +35,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     SubmitComponent,
     ResultComponent,
     CheckoutComponent,
+    WechatPayQRCodeComponent,
   ],
   imports: [
     FormsModule,
@@ -49,6 +50,6 @@ import { MatDialogModule } from '@angular/material/dialog';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [WechatPayQRCodeComponent]
+  // entryComponents: [WechatPayQRCodeComponent]
 })
 export class AppModule { }

@@ -9,13 +9,14 @@ import { WechatPayQRCodeService } from 'src/app/services/wechat-pay-qrcode.servi
 export class WechatPayQRCodeComponent implements OnInit {
   qrCodeLinkUrl;
   qrCodeImageUrl;
+  loading;
   constructor(private wechatPayQRCodeService: WechatPayQRCodeService) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.qrCodeLinkUrl = this.wechatPayQRCodeService.qrCodeUrl;
-    console.log(this.qrCodeLinkUrl)
     this.qrCodeImageUrl = "https://api.qrserver.com/v1/create-qr-code/?data=" + this.qrCodeLinkUrl + "&&size=100x100"
-    console.log(this.qrCodeImageUrl)
+    this.loading = false;
   }
 
 }
