@@ -10,7 +10,6 @@ import { Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { WechatPayQRCodeComponent } from '../wechat-pay-qrcode/wechat-pay-qrcode.component';
 import { WechatPayQRCodeService } from 'src/app/services/wechat-pay-qrcode.service';
-import { UserAgentService } from 'src/app/services/user-agent.service';
 
 declare var StripeCheckout: StripeCheckoutStatic;
 
@@ -37,8 +36,7 @@ export class CheckoutComponent implements OnInit {
     private functions: AngularFireFunctions,
     private router: Router,
     private matDialog: MatDialog,
-    private wechatPayQRCodeService: WechatPayQRCodeService,
-    private userAgentService: UserAgentService) {
+    private wechatPayQRCodeService: WechatPayQRCodeService) {
     this.stripe = Stripe(environment.stripeKey);
   }
 
